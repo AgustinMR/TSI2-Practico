@@ -99,6 +99,10 @@
                                     <div class="ui basic label">Contrase&ntilde;a:</div>
                                     <input id="password" type="password" placeholder="Ingrese aqu&iacute; su contrase&ntilde;a...">
                                 </div>
+                                <div style="margin-top: 16px">
+                                    <select id="rol" class="ui fluid dropdown"></select>    
+                                </div>
+                                <!--holaaaaaaaaaaaa-->
                             </div>
                             <div class="ui secondary center aligned segment">
                                 <button class="ui compact big positive button" onclick="registrarse()"><i class="signup icon"></i>Confirmar</button>
@@ -130,7 +134,18 @@
             </div>
         </div>
         <script th:inline="javascript">
-            function mensajesError() {
+            $(document).ready(function () {
+                mensajesError();
+                $('.ui.dropdown').dropdown();
+                cargarRoles();
+                $('.message .close').on('click', function () {
+                    $(this)
+                        .closest('.message')
+                        .transition('fade down');
+                });
+            });
+            
+            function mensajesError() { 
                 var error = [[${error}]];
                 if (error !== undefined && error !== "") {
                     if (error === "sesion") {
@@ -142,14 +157,6 @@
                     }
                 }
             }
-            $(document).ready(function () {
-                mensajesError();
-                $('.message .close').on('click', function () {
-                    $(this)
-                            .closest('.message')
-                            .transition('fade down');
-                });
-            });
         </script>
         <script>
             function mostrarRegistrarse() {
@@ -174,11 +181,32 @@
                 var username = document.getElementById("username").value;
                 var email = document.getElementById("email").value;
                 var password = document.getElementById("password").value;
-                $.post("http://localhost:8080/web/api/usuarios?nombre=" + nombre + "&apellido=" + apellido + "&username=" + username + "&email=" + email + "&password=" + password + "&rol=1", function (response) {
+                var rol = document.getElementById("rol").value;
+                $.post("http://localhost:8080/web/api/usuarios?nombre=" + nombre + "&apellido=" + apellido + "&username=" + username + "&email=" + email + "&password=" + password + "&rol=" + rol, function (response) {
                     if (response !== undefined) {
                         if (response === true) {
                             mostrarExitoUsuario();
                         }
+                    }
+                });
+            }
+            
+            function cargarRoles() {
+                $.get("http://localhost:8080/web/api/roles", function (response) {
+                    if (response !== undefined) {
+                        while (document.getElementById("rol").hasChildNodes()) {
+                            document.getElementById("rol").removeChild(document.getElementById("rol").lastChild);
+                        }
+                        $.each(response, function (index, rol) {
+                            var option = document.createElement("option");
+                            option.value = rol.id;
+                            option.innerHTML = rol.name;
+                            document.getElementById("rol").appendChild(option);
+                        });
+                        var option3 = document.createElement("option");
+                        option3.value = "";
+                        option3.innerHTML = "Seleccione un Rol para el usuario...";
+                        document.getElementById("rol").appendChild(option3);
                     }
                 });
             }
