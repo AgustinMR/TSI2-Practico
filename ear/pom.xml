@@ -6,7 +6,6 @@
     <groupId>com.tsi2</groupId>
     <version>1.0</version>
   </parent>
-
     <groupId>com.tsi2</groupId>
     <artifactId>ear</artifactId>
     <version>1.0</version>
@@ -46,12 +45,21 @@
             <artifactId>ejb</artifactId>
             <version>1.0</version>
             <type>ejb</type>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.tsi2</groupId>
             <artifactId>web</artifactId>
             <version>1.0</version>
             <type>war</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tsi2</groupId>
+            <artifactId>web-spa</artifactId>
+            <version>1.0</version>
+            <type>war</type>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
