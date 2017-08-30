@@ -146,7 +146,7 @@
             });
             
             function mensajesError() { 
-                var error = /*[[${error}]]*/ undefined;
+                var error = [[${error}]];
                 if (error !== undefined && error !== "") {
                     if (error === "sesion") {
                         document.getElementById("errorSesion").style.display = "flex";
