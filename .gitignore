@@ -22,3 +22,7 @@
 hs_err_pid*
 /web-spa/target/
 /ear/target/
+/ejb/target/
+/web/target/
+ejb/target/classes/com/tsi2/businessLogic/BLLRolBean.class
+*.class

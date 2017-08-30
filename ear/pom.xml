@@ -6,7 +6,6 @@
     <groupId>com.tsi2</groupId>
     <version>1.0</version>
   </parent>
-
     <groupId>com.tsi2</groupId>
     <artifactId>ear</artifactId>
     <version>1.0</version>
