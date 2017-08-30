@@ -21,10 +21,8 @@
             <div class="ui secondary menu">
                 <h3 class="ui header item"><i class="grey home icon"></i>Practico1</h3>
                 <div class="right menu" v-if="autenticado">
-                    <p class="ui header small item grey"></p>
-                    <form class="ui form item" action="/web/logout" method="post">
-                        <button type="submit" class="ui button large icon basic"><i class="sign out icon"></i>Logout</button>
-                    </form>
+                    <p class="ui header small item grey">{{usuarioSesion}}</p>
+                    <button type="submit" class="ui button large icon basic item"><i class="sign out icon"></i>Logout</button>
                 </div>
             </div>
             <div class="ui center aligned container" style="padding: 48px; padding-top: 64px" id="listado">
@@ -87,7 +85,7 @@
                 </div>
                 <div class="sixteen wide column" style="padding: 40px">
                     <div class="ui center aligned basic segment">
-                        <button class="ui inverted grey big button" style="color: #787878" @click="mostrarRegistrarse()"><i class="signup icon"></i>Registrarse</button>
+                        <button class="ui inverted grey big button" style="color: #787878" @click="mostrarRegistrarse"><i class="signup icon"></i>Registrarse</button>
                     </div>
                 </div>
             </div>
@@ -124,7 +122,7 @@
                 </div>
                 <div class="sixteen wide column" style="padding: 40px">
                     <div class="ui center aligned basic segment">
-                        <button class="ui inverted grey big button" style="color: #787878" @click="mostrarLogin()"><i class="arrow left icon"></i>Volver al Login</button>
+                        <button class="ui inverted grey big button" style="color: #787878" @click="mostrarLogin"><i class="arrow left icon"></i>Volver al Login</button>
                     </div>
                 </div>
             </div>
@@ -317,8 +315,48 @@
                 return {
                     autenticado: true,
                     usuario: false,
-                    admin: true
+                    admin: false,
+                    usuarioSesion: ''
                 };
+            },
+            methods: {
+                sesionUsuario: function(usuario) {
+                    var user = [[${username}]];
+                    if(user === undefined){
+                        user = usuario;
+                    }
+                    if (user === undefined || user === "") {
+                        this.autenticado = false;
+                    } else {
+                        this.autenticado = true;
+                        this.usuarioSesion = user;
+                        var rol = [[${rol}]];
+                        if (rol !== undefined && rol !== "") {
+                            if (rol == "Admin") {
+                                this.admin = true;
+                            } else {
+                                this.usuario = true;
+                            }
+                        }
+                    }
+                },
+                logout: function() {
+                    $.post("http://localhost:8080/web-spa/logout", function(response){
+                        if(response !== undefined){
+                            if(response === true){
+                                this.autenticado = false;
+                                this.usuario = false;
+                                this.admin = false;
+                            }
+                        }
+                    });
+                }
+            },
+            mounted: function() {
+                this.sesionUsuario();
+                this.$on('usuarioAutenticado', function(usuario){
+                    this.sesionUsuario(usuario);
+                });
             }
         });
         Vue.component('app-usuario', {
@@ -335,8 +373,7 @@
             },
             methods: {
                 getUsuario: function() {
-                    //var user = [[${username}]];
-                    var user;
+                    var user = [[${username}]];
                     if (user !== undefined && user !== "") {
                         $.get("http://localhost:8080/web/api/usuarios/" + user, function(usuario) {
                             if (usuario !== undefined) {
@@ -358,6 +395,9 @@
                         }
                     });
                 }
+            },
+            mounted: function() {
+                this.getUsuario();
             }
         });
         Vue.component('app-inicio', {
@@ -392,7 +432,15 @@
                     });
                 },
                 autenticarUsuario: function() {
-
+                    if(this.usernameLogin !== "" && this.passwordLogin !== ""){
+                        $.post("http://localhost:8080/web-spa/login", "username=" + this.usernameLogin + "&password=" + this.passwordLogin, function(response){
+                            if(response !== undefined){
+                                if(response === true){
+                                    this.$emit('usuarioAutenticado', this.usernameLogin);
+                                }
+                            }
+                        });
+                    }
                 },
                 registrarUsuario: function() {
                     $.post("http://localhost:8080/web/api/usuarios?nombre=" + this.nombre + "&apellido=" + this.apellido + "&username=" + this.username + "&email=" + this.email + "&password=" + this.password + "&rol=1", function(response) {
@@ -698,6 +746,7 @@
                 });
             $('.ui.dropdown').dropdown();
         });
+
     </script>
 </body>
 
