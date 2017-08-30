@@ -33,7 +33,7 @@
         </div>
     </script>
     <script type="text/x-template" id="app-inicio-template">
-        <div class="ui text container" v-if="mostrar">
+        <div class="ui text container" v-show="mostrar">
             <div class="ui icon error message" id="errorPermiso" style="display: none">
                 <i class="warning circle icon"></i>
                 <i class="close icon"></i>
@@ -116,7 +116,7 @@
                             </div>
                         </div>
                         <div class="ui secondary center aligned segment">
-                            <button class="ui compact big positive button" @click="registrarUsuario()"><i class="signup icon"></i>Confirmar</button>
+                            <button class="ui compact big positive button" @click="registrarUsuario"><i class="signup icon"></i>Confirmar</button>
                         </div>
                     </div>
                 </div>
@@ -285,7 +285,7 @@
         </div>
     </script>
     <script type="text/x-template" id="app-usuario-template">
-        <div v-if="mostrar">
+        <div v-show="mostrar">
             <div class="ui text center aligned container" id="loader" style="padding: 48px; padding-top: 64px">
                 <div class="ui basic segment" style="padding: 100px">
                     <div class="ui active inverted dimmer">
@@ -313,7 +313,7 @@
             template: '#app-nav-template',
             data: function() {
                 return {
-                    autenticado: true,
+                    autenticado: false,
                     usuario: false,
                     admin: false,
                     usuarioSesion: ''
@@ -322,17 +322,17 @@
             methods: {
                 sesionUsuario: function(usuario) {
                     var user = [[${username}]];
-                    if(user === undefined){
+                    if(user === "null" || user === null){
                         user = usuario;
                     }
-                    if (user === undefined || user === "") {
+                    if (user === undefined || user === "" || user === "null") {
                         this.autenticado = false;
                     } else {
                         this.autenticado = true;
                         this.usuarioSesion = user;
                         var rol = [[${rol}]];
-                        if (rol !== undefined && rol !== "") {
-                            if (rol == "Admin") {
+                        if (rol !== "null" && rol !== "") {
+                            if (rol === "Admin") {
                                 this.admin = true;
                             } else {
                                 this.usuario = true;
@@ -353,7 +353,7 @@
                 }
             },
             mounted: function() {
-                this.sesionUsuario();
+                this.sesionUsuario(undefined);
                 this.$on('usuarioAutenticado', function(usuario){
                     this.sesionUsuario(usuario);
                 });
@@ -374,7 +374,7 @@
             methods: {
                 getUsuario: function() {
                     var user = [[${username}]];
-                    if (user !== undefined && user !== "") {
+                    if (user !== "null" && user !== "") {
                         $.get("http://localhost:8080/web/api/usuarios/" + user, function(usuario) {
                             if (usuario !== undefined) {
                                 this.name = usuario.name + " " + usuario.lastname;
@@ -445,8 +445,10 @@
                 registrarUsuario: function() {
                     $.post("http://localhost:8080/web/api/usuarios?nombre=" + this.nombre + "&apellido=" + this.apellido + "&username=" + this.username + "&email=" + this.email + "&password=" + this.password + "&rol=1", function(response) {
                         if (response !== undefined) {
-                            if (response === true) {
-                                this.mostrarExitoUsuario();
+                            if (response === true || response === "true") {
+                                $('#dimmer2').transition('fade up');
+                                document.getElementById("exitoUsuario").style.display = "block";
+                                document.getElementById("errorUsuario").style.display = "none";
                             }
                         }
                     });
@@ -727,14 +729,6 @@
                 admin: false,
                 usuario: false,
                 username: ''
-            },
-            methods: {
-                infoUsuario: function() {
-                    //var user = [[${username}]];
-                    //if(user !== undefined && user !== ""){
-                    //    this.username = user;
-                    //}
-                }
             }
         });
         $(document).ready(function() {
