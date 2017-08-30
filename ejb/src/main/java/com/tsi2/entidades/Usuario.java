@@ -56,7 +56,8 @@ public class Usuario implements Serializable {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
-        this.creationDate = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DATE)).getTime();
+        this.creationDate = Calendar.getInstance().getTime();
+        //this.creationDate = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DATE)).getTime();
     }
 
     public Usuario(String username, String password, String name, String lastname, String email, Rol roleid) {

@@ -1,4 +1,5 @@
 com\tsi2\businessLogic\BLLRolBeanLocal.class
+com\tsi2\ws\UsuarioEndpoint.class
 com\tsi2\businessLogic\BLLRolBean.class
 com\tsi2\entidades\Rol_.class
 com\tsi2\dataAccess\DALUsuarioBean.class
@@ -9,6 +10,7 @@ com\tsi2\controllers\JaxRsActivator.class
 com\tsi2\entidades\Usuario_.class
 com\tsi2\businessLogic\BLLUsuarioBeanLocal.class
 com\tsi2\dataAccess\DALUsuarioBeanLocal.class
+com\tsi2\ws\RolEndpoint.class
 com\tsi2\dataAccess\DALRolBeanLocal.class
 com\tsi2\businessLogic\BLLUsuarioBean.class
 com\tsi2\controllers\UsuarioController.class
