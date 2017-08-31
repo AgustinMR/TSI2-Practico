@@ -22,7 +22,7 @@ public class DALUsuarioBean implements DALUsuarioBeanLocal {
     @Override
     public boolean delete(Usuario u) {
         em.remove(u);
-        return exists(u);
+        return !exists(u);
     }
 
     @Override
