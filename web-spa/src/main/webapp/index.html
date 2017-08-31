@@ -30,6 +30,7 @@
                 <app-usuario :mostrar="usuario"></app-usuario>
                 <app-admin :mostrar="admin"></app-admin>
             </div>
+            <p style="display:none" @usuarioAutenticado="sesionUsuario($event.target.value)"></p>
         </div>
     </script>
     <script type="text/x-template" id="app-inicio-template">
@@ -71,11 +72,11 @@
                             <h4 class="ui header blue text horizontal divider" style="padding: 10px">Iniciar sesi&oacute;n</h4>
                             <div class="ui labeled fluid input">
                                 <div class="ui basic label">Username:</div>
-                                <input v-model="usernameLogin" type="text" name="username" required placeholder="Ingrese aqu&iacute; su username o nombre de usuario...">
+                                <input v-model="usernameLogin" type="text" name="username" required placeholder="Ingrese su username o nombre de usuario...">
                             </div>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
                                 <div class="ui basic label">Contrase&ntilde;a:</div>
-                                <input v-model="passwordLogin" name="password" type="password" placeholder="Ingrese aqu&iacute; su contrase&ntilde;a..." required>
+                                <input v-model="passwordLogin" name="password" type="password" placeholder="Ingrese su password..." required>
                             </div>
                         </div>
                         <div class="ui secondary center aligned segment">
@@ -96,23 +97,23 @@
                             <h4 class="ui header blue text horizontal divider" style="padding: 10px">Registrarse</h4>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
                                 <div class="ui basic label">Nombre:</div>
-                                <input v-model="nombre" type="text" placeholder="Ingrese aqu&iacute; su nombre...">
+                                <input v-model="nombre" type="text" placeholder="Ingrese un nombre...">
                             </div>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
                                 <div class="ui basic label">Apellido:</div>
-                                <input v-model="apellido" type="text" placeholder="Ingrese aquí su apellido...">
+                                <input v-model="apellido" type="text" placeholder="Ingrese un apellido...">
                             </div>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
                                 <div class="ui basic label">Username:</div>
-                                <input v-model="username" type="text" placeholder="Ingrese aquí su username o nombre de usuario...">
+                                <input v-model="username" type="text" placeholder="Ingrese un username o nombre de usuario...">
                             </div>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
                                 <div class="ui basic label">Email:</div>
-                                <input v-model="email" type="email" placeholder="Ingrese aquí su email...">
+                                <input v-model="email" type="email" placeholder="Ingrese un email...">
                             </div>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
-                                <div class="ui basic label">Contraseña:</div>
-                                <input v-model="password" type="password" placeholder="Ingrese aquí su contraseña...">
+                                <div class="ui basic label">Contrase&ntilde;a:</div>
+                                <input v-model="password" type="password" placeholder="Ingrese una contrase&ntilde;a...">
                             </div>
                         </div>
                         <div class="ui secondary center aligned segment">
@@ -126,6 +127,22 @@
                     </div>
                 </div>
             </div>
+            <div class="ui active page dimmer" id="dimmer2" style="display: none">
+            <div class="content">
+                <div class="center">
+                    <div class="row" id="exitoUsuario" style="display: none">
+                        <h1 class="ui header inverted text">Usuario ingresado correctamente!</h1>
+                        <h3 class="ui header inverted text small">A continuaci&oacute;n se iniciar&aacute; sesi&oacute;n</h3>
+                        <button class="ui icon button circular inverted large green" @click="ocultarDimmer"><i class="checkmark large icon"></i></button>
+                    </div>
+                    <div class="row" id="errorUsuario" style="display: none">
+                        <h1 class="ui header inverted text">No se ha podido ingresar el usuario.</h1>
+                        <h3 class="ui header inverted small text">Es posible que el nombre de usuario ya est&eacute; tomado.</h3>
+                        <button class="ui icon button circular inverted large red" @click="ocultarDimmer"><i class="warning large icon"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
     </script>
     <script type="text/x-template" id="app-admin-template">
@@ -354,9 +371,6 @@
             },
             mounted: function() {
                 this.sesionUsuario(undefined);
-                this.$on('usuarioAutenticado', function(usuario){
-                    this.sesionUsuario(usuario);
-                });
             }
         });
         Vue.component('app-usuario', {
@@ -435,7 +449,7 @@
                     if(this.usernameLogin !== "" && this.passwordLogin !== ""){
                         $.post("http://localhost:8080/web-spa/login", "username=" + this.usernameLogin + "&password=" + this.passwordLogin, function(response){
                             if(response !== undefined){
-                                if(response === true){
+                                if (response === true || response === "true") {
                                     this.$emit('usuarioAutenticado', this.usernameLogin);
                                 }
                             }

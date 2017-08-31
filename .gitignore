@@ -26,3 +26,5 @@ hs_err_pid*
 /web/target/
 ejb/target/classes/com/tsi2/businessLogic/BLLRolBean.class
 *.class
+
+/.idea/
