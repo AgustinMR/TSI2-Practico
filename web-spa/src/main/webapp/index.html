@@ -735,17 +735,12 @@
                     document.getElementById("errorUsuario").style.display = "block";
                 },
                 mostrarConfirmacion: function() {
-                    var _this = this;
-                    $('#dimmer').transition({
-                        animation: 'fade',
-                        onComplete: function() {
-                            _this.usuarioActual = this.usernameMod;
-                            document.getElementById("loaderM").style.display = "none";
-                            document.getElementById("exitoDel").style.display = "none";
-                            document.getElementById("exitoMod").style.display = "none";
-                            $('#confirmation').transition('fade up');
-                        }
-                    });
+                    this.usuarioActual = this.usernameMod;
+                    $('#dimmer').transition('fade');
+                    document.getElementById("loaderM").style.display = "none";
+                    document.getElementById("exitoDel").style.display = "none";
+                    document.getElementById("exitoMod").style.display = "none";
+                    document.getElementById("confirmation").style.display = "block";
                 },
                 ocultarDimmer: function() {
                     $('#dimmer2').transition('fade');
@@ -775,7 +770,7 @@
                     document.getElementById("confirmation").style.display = "none";
                 },
                 ocultarDimmerModal: function() {
-                    document.getElementById("dimmer").style.display = "none";
+                    $('#dimmer').transition('fade');
                     document.getElementById("loaderM").style.display = "none";
                     document.getElementById("exitoDel").style.display = "none";
                     document.getElementById("exitoMod").style.display = "none";
