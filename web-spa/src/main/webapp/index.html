@@ -560,8 +560,8 @@
                             success: function(response) {
                                 if (response !== undefined) {
                                     if (response === true || response === "true") {
-                                        $('#exitoDel').transition('fade');
                                         _this.cargarUsuarios(1);
+                                        _this.mostrarExitoDel();
                                     }
                                 }
                             }
@@ -572,14 +572,13 @@
                     var _this = this;
                     var params = "username=" + this.usernameMod + "&nombre=" + this.nombreMod + "&apellido=" + this.apellidoMod + "&email=" + this.emailMod + "&password=" + this.passwordMod + "&rol=" + this.rolMod;
                     $.ajax({
-                        url: 'http://localhost:8080/web/api/usuarios',
+                        url: 'http://localhost:8080/web/api/usuarios?' + params,
                         type: 'PUT',
-                        data: params,
                         success: function(response) {
                             if (response !== undefined) {
                                 if (response === true || response === "true") {
-                                    $('#exitoMod').transition('fade');
                                     _this.cargarUsuarios(1);
+                                    _this.mostrarExitoMod();
                                 }
                             }
                         }
@@ -587,6 +586,7 @@
                 },
                 cargarUsuario: function(username) {
                     if (username !== undefined && username !== "") {
+                        this.mostrarLoaderDimmer();
                         $('.small.modal').modal({
                             blurring: true
                         }).modal('show');
@@ -601,7 +601,7 @@
                                     _this.usernameMod = usuario.username;
                                     _this.rolMod = usuario.roleid.id;
                                     _this.ocultarDimmerModal();
-                                }, 800);
+                                }, 600);
                             }
                         });
                     }
@@ -753,15 +753,36 @@
                     document.getElementById("exitoUsuario").style.display = "none";
                     document.getElementById("errorUsuario").style.display = "none";
                 },
-                ocultarDimmerModal: function() {
+                mostrarExitoMod: function(){
                     $('#dimmer').transition('fade');
+                    document.getElementById("loaderM").style.display = "none";
+                    document.getElementById("exitoDel").style.display = "none";
+                    document.getElementById("exitoMod").style.display = "block";
+                    document.getElementById("confirmation").style.display = "none";
+                },
+                mostrarExitoDel: function(){
+                    $('#dimmer').transition('fade');
+                    document.getElementById("loaderM").style.display = "none";
+                    document.getElementById("exitoDel").style.display = "block";
+                    document.getElementById("exitoMod").style.display = "none";
+                    document.getElementById("confirmation").style.display = "none";
+                },
+                mostrarLoaderDimmer: function(){
+                    $('#dimmer').transition('fade');
+                    document.getElementById("loaderM").style.display = "block";
+                    document.getElementById("exitoDel").style.display = "none";
+                    document.getElementById("exitoMod").style.display = "none";
+                    document.getElementById("confirmation").style.display = "none";
+                },
+                ocultarDimmerModal: function() {
+                    document.getElementById("dimmer").style.display = "none";
                     document.getElementById("loaderM").style.display = "none";
                     document.getElementById("exitoDel").style.display = "none";
                     document.getElementById("exitoMod").style.display = "none";
                     document.getElementById("confirmation").style.display = "none";
                 },
                 ocultarDimmerModal2: function(){
-                    $('#dimmer').transition('fade');
+                    document.getElementById("dimmer").style.display = "none";
                     document.getElementById("loaderM").style.display = "none";
                     document.getElementById("exitoDel").style.display = "none";
                     document.getElementById("exitoMod").style.display = "none";
