@@ -349,15 +349,22 @@
                         this.usuarioSesion = user;
                         var rol = [[${rol}]];
                         alert("rol antes del if: " + rol);
-                        if (rol !== "null" && rol !== "") {
+                        if (rol !== null || rol !== undefined || rol !== "null" && rol !== "") {
                             if (rol === "Admin") {
                                 this.admin = true;
                             } else {
                                 this.usuario = true;
                             }
+                        }else{
+                            $.get("http://localhost:8080/web-spa/info", function(response){
+                                if(response !== undefined && response !== ""){
+                                    rol = response;
+                                }
+                            });
+                            if(rol === "Admin") this.admin = true;
+                            else if(rol === "Usuario") this.usuario = true;
                         }
                     }
-                    alert(user);
                 },
                 logout: function() {
                     $.post("http://localhost:8080/web-spa/logout", function(response){
