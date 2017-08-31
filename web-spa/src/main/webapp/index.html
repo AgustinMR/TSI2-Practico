@@ -30,7 +30,6 @@
                 <app-usuario :mostrar="usuario"></app-usuario>
                 <app-admin :mostrar="admin"></app-admin>
             </div>
-            <p style="display:none" @usuarioAutenticado="sesionUsuario($event.target.value)"></p>
         </div>
     </script>
     <script type="text/x-template" id="app-inicio-template">
@@ -326,6 +325,7 @@
         </div>
     </script>
     <script th:inline="javascript">
+        var bus = new Vue();
         Vue.component('app-nav', {
             template: '#app-nav-template',
             data: function() {
@@ -348,6 +348,7 @@
                         this.autenticado = true;
                         this.usuarioSesion = user;
                         var rol = [[${rol}]];
+                        alert("rol antes del if: " + rol);
                         if (rol !== "null" && rol !== "") {
                             if (rol === "Admin") {
                                 this.admin = true;
@@ -356,6 +357,7 @@
                             }
                         }
                     }
+                    alert(user);
                 },
                 logout: function() {
                     $.post("http://localhost:8080/web-spa/logout", function(response){
@@ -371,6 +373,12 @@
             },
             mounted: function() {
                 this.sesionUsuario(undefined);
+            },
+            created: function(){
+                var _this = this;
+                bus.$on('autenticacion', function(usuario){
+                    _this.sesionUsuario(usuario);
+                });
             }
         });
         Vue.component('app-usuario', {
@@ -447,10 +455,11 @@
                 },
                 autenticarUsuario: function() {
                     if(this.usernameLogin !== "" && this.passwordLogin !== ""){
+                        var usuario = this.usernameLogin;
                         $.post("http://localhost:8080/web-spa/login", "username=" + this.usernameLogin + "&password=" + this.passwordLogin, function(response){
                             if(response !== undefined){
                                 if (response === true || response === "true") {
-                                    this.$emit('usuarioAutenticado', this.usernameLogin);
+                                    bus.$emit('autenticacion', usuario);
                                 }
                             }
                         });
@@ -468,17 +477,17 @@
                     });
                 },
                 mostrarExitoUsuario: function() {
-                    $('#dimmer2').transition('fade up');
+                    $('#dimmer2').transition('fade');
                     document.getElementById("exitoUsuario").style.display = "block";
                     document.getElementById("errorUsuario").style.display = "none";
                 },
                 mostrarErrorUsuario: function() {
-                    $('#dimmer2').transition('fade up');
+                    $('#dimmer2').transition('fade');
                     document.getElementById("exitoUsuario").style.display = "none";
                     document.getElementById("errorUsuario").style.display = "block";
                 },
                 ocultarDimmer: function() {
-                    $('#dimmer2').transition('fade down');
+                    $('#dimmer2').transition('fade');
                     document.getElementById("exitoUsuario").style.display = "block";
                     document.getElementById("errorUsuario").style.display = "none";
                 }
