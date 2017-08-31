@@ -12,7 +12,7 @@ public class InfoUsuarioController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json;charset=UTF-8");
+        resp.setContentType("plain/text;charset=UTF-8");
         if(req.getSession().getAttribute("username") != null) resp.getWriter().write(req.getSession().getAttribute("rol").toString());
     }
     
