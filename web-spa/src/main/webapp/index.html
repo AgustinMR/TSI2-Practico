@@ -166,13 +166,7 @@
                             <th style="width: 20%">Rol</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr v-for="usuario in usuarios">
-                            <td>{{usuario.username}}</td>
-                            <td>{{usuario.email}}</td>
-                            <td><{{usuario.roleid.name}}/td>
-                        </tr>
-                    </tbody>
+                    <tbody id="usuariosList"></tbody>
                     <tfoot>
                         <tr>
                             <th colspan="3">
@@ -265,17 +259,17 @@
                             <div class="center">
                                 <div class="ui text loader large" id="loaderM" style="display: block">Cargando informaci&oacute;n...</div>
                                 <div class="ui blurring basic segment" id="confirmation" style="display: none">
-                                    <h2 class="ui header text">Se eliminará el usuario <span class="ui green text header small">{{usuarioActual}}</span>.</h2>
+                                    <h2 class="ui header text">Se eliminar&aacute; el usuario <span class="ui green text header small">{{usuarioActual}}</span>.</h2>
                                     <h3 class="ui header text grey">&iquest;Confirmar?</h3>
                                     <button class="ui button" @click="ocultarDimmerModal">Cancelar</button>
                                     <button class="ui black button" @click="eliminarUsuario">Eliminar</button>
                                 </div>
                                 <div class="ui blurring basic segment" id="exitoDel" style="display: none">
                                     <h2 class="ui header text">El usuario ha sido eliminado.</h2>
-                                    <button class="ui icon circular button inverted green large" @click="ocultarDimmerModal"><i class="checkmark icon large"></i></button>
+                                    <button class="ui icon circular button inverted green large" @click="ocultarDimmerModal2"><i class="checkmark icon large"></i></button>
                                 </div>
                                 <div class="ui blurring basic segment" id="exitoMod" style="display: none">
-                                    <h2 class="ui header text">Información actualizada correctamente!</h2>
+                                    <h2 class="ui header text">Informaci&oacute;n actualizada correctamente!</h2>
                                     <button class="ui icon circular button inverted green large" @click="ocultarDimmerModal"><i class="checkmark icon large"></i></button>
                                 </div>
                             </div>
@@ -297,11 +291,13 @@
                         <div class="ui basic label">Contrase&ntilde;a</div>
                         <input v-model="passwordMod" type="password">
                     </div>
-                    <select v-model="rolMod" id="rolMod" class="ui fluid dropdown" style="margin-top: 16px"></select>
+                    <div class="row" style="margin-top: 16px"><select v-model="rolMod" id="rolMod" class="ui fluid dropdown"></select></div>
                 </div>
-                <div class="actions">
-                    <div class="ui cancel red inverted button" @click="mostrarConfirmacion">Eliminar</div>
-                    <div class="ui approve positive button" @click="modificarUsuario">Guardar cambios</div>
+                <div class="footer">
+                    <div class="ui secondary basic right aligned segment">
+                        <div class="ui black button" @click="mostrarConfirmacion">Eliminar</div>
+                        <div class="ui positive button" @click="modificarUsuario">Guardar cambios</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -527,8 +523,7 @@
                     rolMod: '',
                     usuarioActual: '',
                     usernameMod: '',
-                    pagina: 1,
-                    usuarios: {}
+                    pagina: 1
                 };
             },
             methods: {
@@ -556,6 +551,7 @@
                     }
                 },
                 eliminarUsuario: function() {
+                    var _this = this;
                     if (this.usuarioActual !== undefined && this.usuarioActual !== "") {
                         var url = "http://localhost:8080/web/api/usuarios/" + this.usuarioActual;
                         $.ajax({
@@ -563,8 +559,9 @@
                             type: 'DELETE',
                             success: function(response) {
                                 if (response !== undefined) {
-                                    if (response === true) {
+                                    if (response === true || response === "true") {
                                         $('#exitoDel').transition('fade');
+                                        _this.cargarUsuarios(1);
                                     }
                                 }
                             }
@@ -572,6 +569,7 @@
                     }
                 },
                 modificarUsuario: function() {
+                    var _this = this;
                     var params = "username=" + this.usernameMod + "&nombre=" + this.nombreMod + "&apellido=" + this.apellidoMod + "&email=" + this.emailMod + "&password=" + this.passwordMod + "&rol=" + this.rolMod;
                     $.ajax({
                         url: 'http://localhost:8080/web/api/usuarios',
@@ -579,8 +577,9 @@
                         data: params,
                         success: function(response) {
                             if (response !== undefined) {
-                                if (response === true) {
+                                if (response === true || response === "true") {
                                     $('#exitoMod').transition('fade');
+                                    _this.cargarUsuarios(1);
                                 }
                             }
                         }
@@ -602,7 +601,7 @@
                                     _this.usernameMod = usuario.username;
                                     _this.rolMod = usuario.roleid.id;
                                     _this.ocultarDimmerModal();
-                                }, 1000);
+                                }, 800);
                             }
                         });
                     }
@@ -611,7 +610,25 @@
                     var _this = this;
                     $.get("http://localhost:8080/web/api/usuarios?filtro=" + this.filtro + "&pagina=" + pagina, function(response) {
                         if (response !== undefined) {
-                            this.usuarios = response;
+                            while (document.getElementById("usuariosList").hasChildNodes()) {
+                                document.getElementById("usuariosList").removeChild(document.getElementById("usuariosList").lastChild);
+                            }
+                            $.each(response, function(index, usuario) {
+                                var tr = document.createElement("tr");
+                                tr.addEventListener("dblclick", function() {
+                                    _this.cargarUsuario(usuario.username);
+                                });
+                                var td1 = document.createElement("td");
+                                td1.innerHTML = usuario.username;
+                                var td2 = document.createElement("td");
+                                td2.innerHTML = usuario.email;
+                                var td3 = document.createElement("td");
+                                td3.innerHTML = usuario.roleid.name;
+                                tr.appendChild(td1);
+                                tr.appendChild(td2);
+                                tr.appendChild(td3);
+                                document.getElementById("usuariosList").appendChild(tr);
+                            });
                         }
                     });
                 },
@@ -742,11 +759,23 @@
                     document.getElementById("exitoDel").style.display = "none";
                     document.getElementById("exitoMod").style.display = "none";
                     document.getElementById("confirmation").style.display = "none";
+                },
+                ocultarDimmerModal2: function(){
+                    $('#dimmer').transition('fade');
+                    document.getElementById("loaderM").style.display = "none";
+                    document.getElementById("exitoDel").style.display = "none";
+                    document.getElementById("exitoMod").style.display = "none";
+                    document.getElementById("confirmation").style.display = "none";
+                    $('.small.modal').modal('hide');
                 }
             },
             created: function(){
                 $('.ui.dropdown').dropdown();
+            },
+            mounted: function(){
                 this.cargarUsuarios(1);
+                this.cargarRoles();
+                $('.ui.dropdown').dropdown();
             }
         });
 

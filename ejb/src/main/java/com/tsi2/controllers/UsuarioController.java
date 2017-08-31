@@ -46,11 +46,6 @@ public class UsuarioController {
     public Usuario getUsuario(@PathParam("username") String username) {
         return usuarios.getUsuario(username);
     }
-
-    @GET
-    public List<Usuario> getUsuarios() {
-        return usuarios.getUsuarios();
-    }
     
     @GET
     public List<Usuario> getUsuarios(@QueryParam("filtro") String filtro, @QueryParam("pagina") int pagina){
