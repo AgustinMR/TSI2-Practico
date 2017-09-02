@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <meta charset="UTF-8"/>
+        <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>TSI2 | Practico</title>
+        <link rel="stylesheet" href="resources/css/semantic.min.css"/>
+        <script src="resources/js/jquery.js"></script>
+        <script src="resources/js/semantic.min.js"></script>
+    </h:head>
+    <h:body>
+        <div class="ui secondary menu">
+            <h3 class="ui header item"><i class="grey home icon"></i>Practico1</h3>
+            <div class="right menu">
+                <p class="ui header small item">#{usuarioController.usernameLogin}</p>
+                <h:form>
+                    <h:commandButton type="submit" action="#{usuarioController.logout()}" value="Logout" class="ui large basic button" />
+                </h:form>
+            </div>
+        </div>
+        <div class="ui text center aligned container" id="loader" style="padding: 48px; padding-top: 64px">
+            <div class="ui basic segment" style="padding: 100px">
+                <div class="ui active inverted dimmer">
+                    <div class="ui text large loader">Cargando informaci&oacute;n...</div>
+                </div>
+            </div>
+        </div>
+        <div class="ui text center aligned container" id="coso" style="padding: 48px; padding-top: 64px; display: none">
+            <div class="ui icon header huge">
+                <i class="user circle grey icon"></i>
+                <h1 id="name" class="ui header green text"></h1>
+                <h3 id="email" class="ui grey header" style="margin-top: 0px"></h3>
+                <h5 id="date" class="ui sub header" style="margin-top: -5px"></h5>
+            </div>
+            <div class="ui divider"></div>
+            <h5 class="ui sub grey header">rol</h5>
+            <h1 id="rol" class="ui grey header" style="margin-top: 0px"></h1>
+            <h6 class="ui sub grey header small">username</h6>
+            <h2 id="usern" class="ui grey header" style="margin-top: 0px"></h2>
+        </div>
+        <script>
+            $(document).ready(function () {
+                getUsuario();
+            });
+            function ocultarLoader() {
+                $('#loader').transition({
+                    animation: 'fade down',
+                    onComplete: function () {
+                        $('#coso').transition('fade up');
+                    }
+                });
+            }
+            function getUsuario() {
+                var user = [[${username}]];
+                if (user !== undefined && user !== "") {
+                    $.get("http://localhost:8080/web/api/usuarios/" + user, function (usuario) {
+                        if (usuario !== undefined) {
+                            document.getElementById("name").innerHTML = usuario.name + " " + usuario.lastname;
+                            document.getElementById("email").innerHTML = usuario.email;
+                            document.getElementById("date").innerHTML = usuario.creationDate;
+                            document.getElementById("rol").innerHTML = usuario.roleid.name;
+                            document.getElementById("usern").innerHTML = usuario.username;
+                            setTimeout(ocultarLoader(), 1300);
+                        }
+                    });
+                }
+            }
+        </script>
+    </h:body>
+</html>

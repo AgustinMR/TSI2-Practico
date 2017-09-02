@@ -28,3 +28,4 @@ ejb/target/classes/com/tsi2/businessLogic/BLLRolBean.class
 *.class
 
 /.idea/
+/web-jsf/target/

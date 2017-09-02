@@ -11,5 +11,6 @@
     <module>web</module>
     <module>ejb</module>
     <module>web-spa</module>
+    <module>web-jsf</module>
   </modules>
 </project>
