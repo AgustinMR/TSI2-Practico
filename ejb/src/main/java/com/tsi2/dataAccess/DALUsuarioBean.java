@@ -22,7 +22,7 @@ public class DALUsuarioBean implements DALUsuarioBeanLocal {
     @Override
     public boolean delete(Usuario u) {
         em.remove(u);
-        return exists(u);
+        return !exists(u);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class DALUsuarioBean implements DALUsuarioBeanLocal {
     @Override
     public List<Usuario> findAll(String filtro, int pagina) {
         int skip = ((pagina * 10) - 10);
-        return em.createQuery("SELECT u FROM Usuario u WHERE u.username LIKE :f", Usuario.class).setParameter("f", "%" + filtro + "%").setMaxResults(10).setFirstResult(skip).getResultList();
+        return em.createQuery("SELECT u FROM Usuario u WHERE u.username LIKE :f ORDER BY u.creationDate DESC", Usuario.class).setParameter("f", "%" + filtro + "%").setMaxResults(10).setFirstResult(skip).getResultList();
     }
     
 }

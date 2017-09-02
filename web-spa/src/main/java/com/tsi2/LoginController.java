@@ -22,7 +22,7 @@ public class LoginController extends HttpServlet {
         if (req.getSession().getAttribute("username") == null) {
             String username = req.getParameter("username");
             String password = req.getParameter("password");
-            if (username != null && password == null) {
+            if (username != null && password != null) {
                 Usuario u = em.find(Usuario.class, username);
                 if (u != null) {
                     if (u.getPassword().equals(password)) {
@@ -34,16 +34,16 @@ public class LoginController extends HttpServlet {
                         }
                         resp.getWriter().write("true");
                     } else {
-                        resp.getWriter().write("false");
+                        resp.getWriter().write("false4");
                     }
                 } else {
-                    resp.getWriter().write("false");
+                    resp.getWriter().write("false3");
                 }
             } else {
-                resp.getWriter().write("false");
+                resp.getWriter().write("false2");
             }
         } else {
-            resp.getWriter().write("false");
+            resp.getWriter().write("false1");
         }
     }
 

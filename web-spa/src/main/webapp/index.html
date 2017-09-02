@@ -22,18 +22,18 @@
                 <h3 class="ui header item"><i class="grey home icon"></i>Practico1</h3>
                 <div class="right menu" v-if="autenticado">
                     <p class="ui header small item grey">{{usuarioSesion}}</p>
-                    <button type="submit" class="ui button large icon basic item"><i class="sign out icon"></i>Logout</button>
+                    <button @click="logout" class="ui button large icon basic item"><i class="sign out icon"></i>Logout</button>
                 </div>
             </div>
             <div class="ui center aligned container" style="padding: 48px; padding-top: 64px" id="listado">
-                <app-inicio :mostrar="!autenticado"></app-inicio>
-                <app-usuario :mostrar="usuario"></app-usuario>
-                <app-admin :mostrar="admin"></app-admin>
+                <app-inicio v-if="!autenticado"></app-inicio>
+                <app-usuario v-if="usuario" :user="usuarioSesion"></app-usuario>
+                <app-admin v-if="admin"></app-admin>
             </div>
         </div>
     </script>
     <script type="text/x-template" id="app-inicio-template">
-        <div class="ui text container" v-show="mostrar">
+        <div class="ui text container">
             <div class="ui icon error message" id="errorPermiso" style="display: none">
                 <i class="warning circle icon"></i>
                 <i class="close icon"></i>
@@ -71,11 +71,11 @@
                             <h4 class="ui header blue text horizontal divider" style="padding: 10px">Iniciar sesi&oacute;n</h4>
                             <div class="ui labeled fluid input">
                                 <div class="ui basic label">Username:</div>
-                                <input v-model="usernameLogin" type="text" name="username" required placeholder="Ingrese aqu&iacute; su username o nombre de usuario...">
+                                <input v-model="usernameLogin" type="text" name="username" required placeholder="Ingrese su username o nombre de usuario...">
                             </div>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
                                 <div class="ui basic label">Contrase&ntilde;a:</div>
-                                <input v-model="passwordLogin" name="password" type="password" placeholder="Ingrese aqu&iacute; su contrase&ntilde;a..." required>
+                                <input v-model="passwordLogin" name="password" type="password" placeholder="Ingrese su password..." required>
                             </div>
                         </div>
                         <div class="ui secondary center aligned segment">
@@ -96,23 +96,23 @@
                             <h4 class="ui header blue text horizontal divider" style="padding: 10px">Registrarse</h4>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
                                 <div class="ui basic label">Nombre:</div>
-                                <input v-model="nombre" type="text" placeholder="Ingrese aqu&iacute; su nombre...">
+                                <input v-model="nombre" type="text" placeholder="Ingrese un nombre...">
                             </div>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
                                 <div class="ui basic label">Apellido:</div>
-                                <input v-model="apellido" type="text" placeholder="Ingrese aquí su apellido...">
+                                <input v-model="apellido" type="text" placeholder="Ingrese un apellido...">
                             </div>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
                                 <div class="ui basic label">Username:</div>
-                                <input v-model="username" type="text" placeholder="Ingrese aquí su username o nombre de usuario...">
+                                <input v-model="username" type="text" placeholder="Ingrese un username o nombre de usuario...">
                             </div>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
                                 <div class="ui basic label">Email:</div>
-                                <input v-model="email" type="email" placeholder="Ingrese aquí su email...">
+                                <input v-model="email" type="email" placeholder="Ingrese un email...">
                             </div>
                             <div class="ui labeled fluid input" style="margin-top: 16px">
-                                <div class="ui basic label">Contraseña:</div>
-                                <input v-model="password" type="password" placeholder="Ingrese aquí su contraseña...">
+                                <div class="ui basic label">Contrase&ntilde;a:</div>
+                                <input v-model="password" type="password" placeholder="Ingrese una contrase&ntilde;a...">
                             </div>
                         </div>
                         <div class="ui secondary center aligned segment">
@@ -126,10 +126,26 @@
                     </div>
                 </div>
             </div>
+            <div class="ui active page dimmer" id="dimmer2" style="display: none">
+            <div class="content">
+                <div class="center">
+                    <div class="row" id="exitoUsuario" style="display: none">
+                        <h1 class="ui header inverted text">Usuario ingresado correctamente!</h1>
+                        <h3 class="ui header inverted text small">A continuaci&oacute;n se iniciar&aacute; sesi&oacute;n</h3>
+                        <button class="ui icon button circular inverted large green" @click="ocultarDimmer"><i class="checkmark large icon"></i></button>
+                    </div>
+                    <div class="row" id="errorUsuario" style="display: none">
+                        <h1 class="ui header inverted text">No se ha podido ingresar el usuario.</h1>
+                        <h3 class="ui header inverted small text">Es posible que el nombre de usuario ya est&eacute; tomado.</h3>
+                        <button class="ui icon button circular inverted large red" @click="ocultarDimmer"><i class="warning large icon"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
     </script>
     <script type="text/x-template" id="app-admin-template">
-        <div v-show="mostrar">
+        <div>
             <div class="ui center aligned container" id="listadoAdmin">
                 <h1 class="ui header text icon title green horizontal divider" style="padding: 16px"><i class=" users grey icon"></i>Usuarios</h1>
                 <div class="ui text container">
@@ -158,7 +174,7 @@
                                     <a class="icon item" @click="cargarUsuariosAnterior">
                                         <i class="left chevron icon"></i>
                                     </a>
-                                    <a id="pag" class="disabled item header">1</a>
+                                    <a id="pag" class="disabled item header">{{pagina}}</a>
                                     <a class="icon item" @click="cargarUsuariosSiguiente">
                                         <i class="right chevron icon"></i>
                                     </a>
@@ -173,23 +189,23 @@
                 <div class="ui text container" style="padding: 20px">
                     <div class="ui fluid labeled input">
                         <div class="ui basic label">Nombre</div>
-                        <input v-model="nombreNuevo" type="text" placeholder="Ingrese aquí el nombre...">
+                        <input v-model="nombreNuevo" type="text" placeholder="Ingrese un nombre...">
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Apellido</div>
-                        <input v-model="apellidoNuevo" type="text" placeholder="Ingrese aquí el apellido...">
+                        <input v-model="apellidoNuevo" type="text" placeholder="Ingrese un apellido...">
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Username</div>
-                        <input v-model="usernameNuevo" type="text" placeholder="Ingrese aquí el username...">
+                        <input v-model="usernameNuevo" type="text" placeholder="Ingrese un username o nombre de usuario...">
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Email</div>
-                        <input v-model="emailNuevo" type="text" placeholder="Ingrese aquí el email...">
+                        <input v-model="emailNuevo" type="text" placeholder="Ingrese un email...">
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
-                        <div class="ui basic label">Contraseña</div>
-                        <input v-model="passwordNuevo" type="password" placeholder="Ingrese aquí la contraseña...">
+                        <div class="ui basic label">Contrase&ntilde;a</div>
+                        <input v-model="passwordNuevo" type="password" placeholder="Ingrese un password...">
                     </div>
                     <h3 class="ui horizontal divider sub header text green" style="padding: 16px">rol</h3>
                     <select v-model="rolSeleccionado" id="rolSeleccionado" class="ui fluid dropdown"></select>
@@ -204,11 +220,11 @@
                 <div class="ui text container" style="padding: 20px">
                     <div class="ui fluid labeled input">
                         <div class="ui basic label">Nombre</div>
-                        <input v-model="rolNuevo" type="text" placeholder="Ingrese aquí el nombre...">
+                        <input v-model="rolNuevo" type="text" placeholder="Ingrese nombre del rol...">
                     </div>
                     <div class="ui reply form" style="margin-top: 16px">
                         <div class="field">
-                            <textarea v-model="descripcionNuevo" cols="30" style="min-height: 100px; max-width: 100%; min-width: 100%; max-height: 150px" maxlength="1024" placeholder="Escriba aquí una descripción para el rol..."></textarea>
+                            <textarea v-model="descripcionNuevo" cols="30" style="min-height: 100px; max-width: 100%; min-width: 100%; max-height: 150px" maxlength="1024" placeholder="Escriba una descripcion del rol..."></textarea>
                         </div>
                     </div>
                     <div class="row" style="padding: 30px">
@@ -241,19 +257,19 @@
                     <div class="ui inverted active loading dimmer" style="display: block" id="dimmer">
                         <div class="content">
                             <div class="center">
-                                <div class="ui text loader large" id="loaderM" style="display: block">Cargando información...</div>
+                                <div class="ui text loader large" id="loaderM" style="display: block">Cargando informaci&oacute;n...</div>
                                 <div class="ui blurring basic segment" id="confirmation" style="display: none">
-                                    <h2 class="ui header text">Se eliminará el usuario <span class="ui green text header small">{{usuarioActual}}</span>.</h2>
+                                    <h2 class="ui header text">Se eliminar&aacute; el usuario <span class="ui green text header small">{{usuarioActual}}</span>.</h2>
                                     <h3 class="ui header text grey">&iquest;Confirmar?</h3>
                                     <button class="ui button" @click="ocultarDimmerModal">Cancelar</button>
                                     <button class="ui black button" @click="eliminarUsuario">Eliminar</button>
                                 </div>
                                 <div class="ui blurring basic segment" id="exitoDel" style="display: none">
                                     <h2 class="ui header text">El usuario ha sido eliminado.</h2>
-                                    <button class="ui icon circular button inverted green large" @click="ocultarDimmerModal"><i class="checkmark icon large"></i></button>
+                                    <button class="ui icon circular button inverted green large" @click="ocultarDimmerModal2"><i class="checkmark icon large"></i></button>
                                 </div>
                                 <div class="ui blurring basic segment" id="exitoMod" style="display: none">
-                                    <h2 class="ui header text">Información actualizada correctamente!</h2>
+                                    <h2 class="ui header text">Informaci&oacute;n actualizada correctamente!</h2>
                                     <button class="ui icon circular button inverted green large" @click="ocultarDimmerModal"><i class="checkmark icon large"></i></button>
                                 </div>
                             </div>
@@ -261,35 +277,37 @@
                     </div>
                     <div class="ui fluid labeled input">
                         <div class="ui basic label">Nombre</div>
-                        <input v-model="nombreMod" type="text" placeholder="Ingrese aquí el nombre del usuario...">
+                        <input v-model="nombreMod" type="text">
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Apellido</div>
-                        <input v-model="apellidoMod" type="text" placeholder="Ingrese aquí el apellido del usuario...">
+                        <input v-model="apellidoMod" type="text">
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Email</div>
-                        <input v-model="emailMod" type="text" placeholder="Ingrese aquí el email del usuario...">
+                        <input v-model="emailMod" type="text">
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
-                        <div class="ui basic label">Contraseña</div>
-                        <input v-model="passwordMod" type="password" placeholder="Ingrese aquí una contraseña..">
+                        <div class="ui basic label">Contrase&ntilde;a</div>
+                        <input v-model="passwordMod" type="password">
                     </div>
-                    <select v-model="rolMod" id="rolMod" class="ui fluid dropdown" style="margin-top: 16px"></select>
+                    <div class="row" style="margin-top: 16px"><select v-model="rolMod" id="rolMod" class="ui fluid dropdown"></select></div>
                 </div>
-                <div class="actions">
-                    <div class="ui cancel red inverted button" @click="mostrarConfirmacion">Eliminar</div>
-                    <div class="ui approve positive button" @click="modificarUsuario">Guardar cambios</div>
+                <div class="footer">
+                    <div class="ui secondary basic right aligned segment">
+                        <div class="ui black button" @click="mostrarConfirmacion">Eliminar</div>
+                        <div class="ui positive button" @click="modificarUsuario">Guardar cambios</div>
+                    </div>
                 </div>
             </div>
         </div>
     </script>
     <script type="text/x-template" id="app-usuario-template">
-        <div v-show="mostrar">
+        <div>
             <div class="ui text center aligned container" id="loader" style="padding: 48px; padding-top: 64px">
                 <div class="ui basic segment" style="padding: 100px">
                     <div class="ui active inverted dimmer">
-                        <div class="ui text large loader">Cargando información...</div>
+                        <div class="ui text large loader">Cargando informaci&oacute;n...</div>
                     </div>
                 </div>
             </div>
@@ -309,6 +327,7 @@
         </div>
     </script>
     <script th:inline="javascript">
+        var bus = new Vue();
         Vue.component('app-nav', {
             template: '#app-nav-template',
             data: function() {
@@ -330,38 +349,47 @@
                     } else {
                         this.autenticado = true;
                         this.usuarioSesion = user;
-                        var rol = [[${rol}]];
-                        if (rol !== "null" && rol !== "") {
-                            if (rol === "Admin") {
-                                this.admin = true;
-                            } else {
-                                this.usuario = true;
+                        var _this = this;
+                        $.get("http://localhost:8080/web-spa/info", function(response){
+                            if(response !== undefined && response !== ""){
+                                _this.usernameLogin = "";
+                                _this.passwordLogin = "";
+                                if(response === "Admin"){
+                                    _this.admin = true;
+                                    _this.usuario = false;
+                                }else if(response === "Usuario"){
+                                    _this.usuario = true;
+                                    _this.admin = false;
+                                }
                             }
-                        }
+                        });
                     }
                 },
                 logout: function() {
+                    var _this = this;
                     $.post("http://localhost:8080/web-spa/logout", function(response){
                         if(response !== undefined){
-                            if(response === true){
-                                this.autenticado = false;
-                                this.usuario = false;
-                                this.admin = false;
+                            if(response === true || response === "true"){
+                                _this.autenticado = false;
+                                _this.usuario = false;
+                                _this.admin = false;
+                                _this.usuarioSesion = '';
                             }
                         }
                     });
                 }
             },
-            mounted: function() {
+            created: function(){
                 this.sesionUsuario(undefined);
-                this.$on('usuarioAutenticado', function(usuario){
-                    this.sesionUsuario(usuario);
+                var _this = this;
+                bus.$on('autenticacion', function(usuario){
+                    _this.sesionUsuario(usuario);
                 });
             }
         });
         Vue.component('app-usuario', {
             template: '#app-usuario-template',
-            props: ['mostrar'],
+            props: ['mostrar', 'user'],
             data: function() {
                 return {
                     name: '',
@@ -373,16 +401,16 @@
             },
             methods: {
                 getUsuario: function() {
-                    var user = [[${username}]];
-                    if (user !== "null" && user !== "") {
-                        $.get("http://localhost:8080/web/api/usuarios/" + user, function(usuario) {
+                    if (this.user !== undefined && this.user !== "") {
+                        var _this = this;
+                        $.get("http://localhost:8080/web/api/usuarios/" + this.user, function(usuario) {
                             if (usuario !== undefined) {
-                                this.name = usuario.name + " " + usuario.lastname;
-                                this.email = usuario.email;
-                                this.date = usuario.creationDate;
-                                this.rol = usuario.roleid.name;
-                                this.usern = usuario.username;
-                                setTimeout(ocultarLoader(), 1300);
+                                _this.name = usuario.name + " " + usuario.lastname;
+                                _this.email = usuario.email;
+                                _this.date = usuario.creationDate;
+                                _this.rol = usuario.roleid.name;
+                                _this.usern = usuario.username;
+                                setTimeout(_this.ocultarLoader(), 1300);
                             }
                         });
                     }
@@ -396,7 +424,7 @@
                     });
                 }
             },
-            mounted: function() {
+            created: function() {
                 this.getUsuario();
             }
         });
@@ -433,10 +461,11 @@
                 },
                 autenticarUsuario: function() {
                     if(this.usernameLogin !== "" && this.passwordLogin !== ""){
+                        var usuario = this.usernameLogin;
                         $.post("http://localhost:8080/web-spa/login", "username=" + this.usernameLogin + "&password=" + this.passwordLogin, function(response){
                             if(response !== undefined){
-                                if(response === true){
-                                    this.$emit('usuarioAutenticado', this.usernameLogin);
+                                if (response === true || response === "true") {
+                                    bus.$emit('autenticacion', usuario);
                                 }
                             }
                         });
@@ -454,20 +483,23 @@
                     });
                 },
                 mostrarExitoUsuario: function() {
-                    $('#dimmer2').transition('fade up');
+                    $('#dimmer2').transition('fade');
                     document.getElementById("exitoUsuario").style.display = "block";
                     document.getElementById("errorUsuario").style.display = "none";
                 },
                 mostrarErrorUsuario: function() {
-                    $('#dimmer2').transition('fade up');
+                    $('#dimmer2').transition('fade');
                     document.getElementById("exitoUsuario").style.display = "none";
                     document.getElementById("errorUsuario").style.display = "block";
                 },
                 ocultarDimmer: function() {
-                    $('#dimmer2').transition('fade down');
+                    $('#dimmer2').transition('fade');
                     document.getElementById("exitoUsuario").style.display = "block";
                     document.getElementById("errorUsuario").style.display = "none";
                 }
+            },
+            created: function(){
+                $('.ui.dropdown').dropdown();
             }
         });
         Vue.component('app-admin', {
@@ -490,30 +522,36 @@
                     passwordMod: '',
                     rolMod: '',
                     usuarioActual: '',
-                    usernameMod: ''
+                    usernameMod: '',
+                    pagina: 1
                 };
             },
             methods: {
                 registrarUsuario: function() {
                     if (this.rolSeleccionado !== undefined && this.usernameNuevo !== undefined && this.usernameNuevo !== "") {
+                        var _this = this;
                         $.post("http://localhost:8080/web/api/usuarios?nombre=" + this.nombreNuevo + "&apellido=" + this.apellidoNuevo + "&username=" + this.usernameNuevo + "&email=" + this.emailNuevo + "&password=" + this.passwordNuevo + "&rol=" + this.rolSeleccionado, function(response) {
                             if (response !== undefined) {
-                                if (response === true) {
-                                    this.nombreNuevo = "";
-                                    this.apellidoNuevo = "";
-                                    this.usernameNuevo = "";
-                                    this.emailNuevo = "";
-                                    this.passwordNuevo = "";
-                                    this.rolSeleccionado = "";
-                                    this.mostrarListado();
-                                    this.mostrarExitoUsuario();
-                                    this.cargarUsuarios(1);
+                                if (response === true || response === "true") {
+                                    _this.nombreNuevo = "";
+                                    _this.apellidoNuevo = "";
+                                    _this.usernameNuevo = "";
+                                    _this.emailNuevo = "";
+                                    _this.passwordNuevo = "";
+                                    _this.rolSeleccionado = "";
+                                    _this.mostrarListado();
+                                    _this.mostrarExitoUsuario();
+                                    _this.cargarUsuarios(1);
+                                }
+                                else {
+                                    _this.mostrarErrorUsuario();
                                 }
                             }
                         });
                     }
                 },
                 eliminarUsuario: function() {
+                    var _this = this;
                     if (this.usuarioActual !== undefined && this.usuarioActual !== "") {
                         var url = "http://localhost:8080/web/api/usuarios/" + this.usuarioActual;
                         $.ajax({
@@ -521,8 +559,9 @@
                             type: 'DELETE',
                             success: function(response) {
                                 if (response !== undefined) {
-                                    if (response === true) {
-                                        $('#exitoDel').transition('fade up');
+                                    if (response === true || response === "true") {
+                                        _this.cargarUsuarios(1);
+                                        _this.mostrarExitoDel();
                                     }
                                 }
                             }
@@ -530,15 +569,16 @@
                     }
                 },
                 modificarUsuario: function() {
+                    var _this = this;
                     var params = "username=" + this.usernameMod + "&nombre=" + this.nombreMod + "&apellido=" + this.apellidoMod + "&email=" + this.emailMod + "&password=" + this.passwordMod + "&rol=" + this.rolMod;
                     $.ajax({
-                        url: 'http://localhost:8080/web/api/usuarios',
+                        url: 'http://localhost:8080/web/api/usuarios?' + params,
                         type: 'PUT',
-                        data: params,
                         success: function(response) {
                             if (response !== undefined) {
-                                if (response === true) {
-                                    $('#exitoMod').transition('fade up');
+                                if (response === true || response === "true") {
+                                    _this.cargarUsuarios(1);
+                                    _this.mostrarExitoMod();
                                 }
                             }
                         }
@@ -546,28 +586,28 @@
                 },
                 cargarUsuario: function(username) {
                     if (username !== undefined && username !== "") {
+                        this.mostrarLoaderDimmer();
                         $('.small.modal').modal({
                             blurring: true
                         }).modal('show');
+                        var _this = this;
                         $.get("http://localhost:8080/web/api/usuarios/" + username, function(usuario) {
                             if (usuario !== undefined) {
                                 setTimeout(function() {
-                                    this.nombreMod = usuario.name;
-                                    this.apellidoMod = usuario.lastname;
-                                    this.emailMod = usuario.email;
-                                    this.passwordMod = usuario.password;
-                                    this.usernameMod = usuario.username;
-                                    this.rolMod = usuario.roleid.id;
-                                    this.ocultarDimmerModal();
-                                }, 1000);
+                                    _this.nombreMod = usuario.name;
+                                    _this.apellidoMod = usuario.lastname;
+                                    _this.emailMod = usuario.email;
+                                    _this.passwordMod = usuario.password;
+                                    _this.usernameMod = usuario.username;
+                                    _this.rolMod = usuario.roleid.id;
+                                    _this.ocultarDimmerModal();
+                                }, 600);
                             }
                         });
                     }
                 },
                 cargarUsuarios: function(pagina) {
-                    if (pagina === undefined) {
-                        pagina = 1;
-                    }
+                    var _this = this;
                     $.get("http://localhost:8080/web/api/usuarios?filtro=" + this.filtro + "&pagina=" + pagina, function(response) {
                         if (response !== undefined) {
                             while (document.getElementById("usuariosList").hasChildNodes()) {
@@ -576,7 +616,7 @@
                             $.each(response, function(index, usuario) {
                                 var tr = document.createElement("tr");
                                 tr.addEventListener("dblclick", function() {
-                                    cargarUsuario(usuario.username);
+                                    _this.cargarUsuario(usuario.username);
                                 });
                                 var td1 = document.createElement("td");
                                 td1.innerHTML = usuario.username;
@@ -593,16 +633,15 @@
                     });
                 },
                 cargarUsuariosSiguiente: function() {
-                    if (document.getElementById("usuariosList").childNodes.length > 0) {
-                        this.cargarUsuarios((Number(document.getElementById("pag").innerHTML) + 1));
-                        document.getElementById("pag").innerHTML = (Number(document.getElementById("pag").innerHTML) + 1).toString();
+                    if (document.getElementById("usuariosList").childNodes.length >= 10) {
+                        this.pagina += 1;
+                        this.cargarUsuarios(this.pagina);
                     }
                 },
                 cargarUsuariosAnterior: function() {
-                    var paginaActual = Number(document.getElementById("pag").innerHTML);
-                    if (paginaActual > 1) {
-                        this.cargarUsuarios((paginaActual - 1));
-                        document.getElementById("pag").innerHTML = (paginaActual - 1).toString();
+                    if (this.pagina > 1) {
+                        this.pagina -= 1;
+                        this.cargarUsuarios(this.pagina);
                     }
                 },
                 cargarRoles: function() {
@@ -632,14 +671,15 @@
                     });
                 },
                 crearRol: function() {
+                    var _this = this;
                     $.post("http://localhost:8080/web/api/roles?nombre=" + this.rolNuevo + "&descripcion=" + this.descripcionNuevo, function(response) {
                         if (response !== undefined) {
-                            if (response === true) {
-                                this.rolNuevo = "";
-                                this.descripcionNuevo = "";
-                                this.cargarRoles();
-                                this.mostrarListadoRoles();
-                                this.mostrarExitoRol();
+                            if (response === true || response === "true") {
+                                _this.rolNuevo = "";
+                                _this.descripcionNuevo = "";
+                                _this.cargarRoles();
+                                _this.mostrarListadoRoles();
+                                _this.mostrarExitoRol();
                             }
                         }
                     });
@@ -677,48 +717,81 @@
                     });
                 },
                 mostrarExitoRol: function() {
-                    $('#dimmer2').transition('fade up');
+                    $('#dimmer2').transition('fade');
                     document.getElementById("exitoRol").style.display = "block";
                     document.getElementById("exitoUsuario").style.display = "none";
                     document.getElementById("errorUsuario").style.display = "none";
                 },
                 mostrarExitoUsuario: function() {
-                    $('#dimmer2').transition('fade up');
+                    $('#dimmer2').transition('fade');
                     document.getElementById("exitoRol").style.display = "none";
                     document.getElementById("exitoUsuario").style.display = "block";
                     document.getElementById("errorUsuario").style.display = "none";
                 },
                 mostrarErrorUsuario: function() {
-                    $('#dimmer2').transition('fade up');
+                    $('#dimmer2').transition('fade');
                     document.getElementById("exitoRol").style.display = "none";
                     document.getElementById("exitoUsuario").style.display = "none";
                     document.getElementById("errorUsuario").style.display = "block";
                 },
                 mostrarConfirmacion: function() {
-                    $('#dimmer').transition({
-                        animation: 'fade up',
-                        onComplete: function() {
-                            this.usuarioActual = this.usernameMod;
-                            document.getElementById("loaderM").style.display = "none";
-                            document.getElementById("exitoDel").style.display = "none";
-                            document.getElementById("exitoMod").style.display = "none";
-                            $('#confirmation').transition('fade up');
-                        }
-                    });
+                    this.usuarioActual = this.usernameMod;
+                    $('#dimmer').transition('fade');
+                    document.getElementById("loaderM").style.display = "none";
+                    document.getElementById("exitoDel").style.display = "none";
+                    document.getElementById("exitoMod").style.display = "none";
+                    document.getElementById("confirmation").style.display = "block";
                 },
                 ocultarDimmer: function() {
-                    $('#dimmer2').transition('fade down');
+                    $('#dimmer2').transition('fade');
                     document.getElementById("exitoRol").style.display = "none";
                     document.getElementById("exitoUsuario").style.display = "none";
                     document.getElementById("errorUsuario").style.display = "none";
                 },
+                mostrarExitoMod: function(){
+                    $('#dimmer').transition('fade');
+                    document.getElementById("loaderM").style.display = "none";
+                    document.getElementById("exitoDel").style.display = "none";
+                    document.getElementById("exitoMod").style.display = "block";
+                    document.getElementById("confirmation").style.display = "none";
+                },
+                mostrarExitoDel: function(){
+                    $('#dimmer').transition('fade');
+                    document.getElementById("loaderM").style.display = "none";
+                    document.getElementById("exitoDel").style.display = "block";
+                    document.getElementById("exitoMod").style.display = "none";
+                    document.getElementById("confirmation").style.display = "none";
+                },
+                mostrarLoaderDimmer: function(){
+                    $('#dimmer').transition('fade');
+                    document.getElementById("loaderM").style.display = "block";
+                    document.getElementById("exitoDel").style.display = "none";
+                    document.getElementById("exitoMod").style.display = "none";
+                    document.getElementById("confirmation").style.display = "none";
+                },
                 ocultarDimmerModal: function() {
-                    $('#dimmer').transition('fade down');
+                    $('#dimmer').transition('fade');
                     document.getElementById("loaderM").style.display = "none";
                     document.getElementById("exitoDel").style.display = "none";
                     document.getElementById("exitoMod").style.display = "none";
                     document.getElementById("confirmation").style.display = "none";
+                },
+                ocultarDimmerModal2: function(){
+                    document.getElementById("dimmer").style.display = "none";
+                    document.getElementById("loaderM").style.display = "none";
+                    document.getElementById("exitoDel").style.display = "none";
+                    document.getElementById("exitoMod").style.display = "none";
+                    document.getElementById("confirmation").style.display = "none";
+                    $('.small.modal').modal('hide');
                 }
+            },
+            created: function(){
+                $('.ui.dropdown').dropdown();
+            },
+            mounted: function(){
+                this.cargarUsuarios(1);
+                this.cargarRoles();
+                $('.ui.dropdown').dropdown();
             }
         });
 
