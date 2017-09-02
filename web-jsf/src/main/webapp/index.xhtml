@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" 
+      xmlns:p="http://primefaces.org/ui" xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <meta charset="UTF-8"/>
+        <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>TSI2 | Practico</title>
+        <link rel="stylesheet" href="resources/css/semantic.min.css"/>
+        <script src="resources/js/jquery.js"></script>
+        <script src="resources/js/semantic.min.js"></script>
+    </h:head>
+    <h:body style="background-color: #g3g3g3">
+        <div class="ui secondary menu">
+            <a class="ui header item"><i class="grey home icon"></i>Practico1</a>
+        </div>
+        <div class="ui container" style="padding: 16px">
+            <div class="ui text container">
+                <div class="ui icon error message" id="errorPermiso" style="display: none">
+                    <i class="warning circle icon"></i>
+                    <i class="close icon"></i>
+                    <div class="content">
+                        <div class="header">
+                            Acceso restringido para administradores.
+                        </div>
+                        <p>Es posible que no tengas los privilegios adecuados para acceder a esa url.</p>
+                    </div>
+                </div>
+                <div class="ui icon error message" id="errorSesion" style="display: none">
+                    <i class="warning circle icon"></i>
+                    <i class="close icon"></i>
+                    <div class="content">
+                        <div class="header">
+                            Inicio de sesi&oacute;n requerido.
+                        </div>
+                        <p>Debes haberte autenticado para tener acceso a esa secci&oacute;n.</p>
+                    </div>
+                </div>
+                <div class="ui icon error message" id="errorUsuario" style="display: none">
+                    <i class="warning circle icon"></i>
+                    <i class="close icon"></i>
+                    <div class="content">
+                        <div class="header">
+                            Credenciales invalidas.
+                        </div>
+                        <p>El usuario con el que intentas acceder no existe, o las credenciales son incorrectas.</p>
+                    </div>
+                </div>
+                <div class="ui stackable grid container" id="login">
+                    <div class="sixteen wide column">
+                        <h:form>
+                            <div class="ui segments">
+                                <div class="ui grey segment">
+                                    <h4 class="ui header blue text horizontal divider" style="padding: 10px">Iniciar sesi&oacute;n</h4>
+                                    <div class="ui labeled fluid input">
+                                        <div class="ui basic label">Username:</div>
+                                        <h:inputText value="#{usuarioController.usernameLogin}" id="usernameLogin" title="Ingrese su username o nombre de usuario..." />
+                                    </div>
+                                    <div class="ui labeled fluid input" style="margin-top: 16px">
+                                        <div class="ui basic label">Contrase&ntilde;a:</div>
+                                        <h:inputSecret value="#{usuarioController.passwordLogin}" id="passwordLogin" title="Ingrese su contrase&ntilde;a..." />
+                                    </div>
+                                </div>
+                                <div class="ui secondary center aligned segment">
+                                    <h:commandButton value="Ingresar" type="submit" class="ui compact big positive button" action="#{usuarioController.login()}" />
+                                </div>
+                            </div>
+                        </h:form>
+                    </div>
+                    <div class="sixteen wide column" style="padding: 40px">
+                        <div class="ui center aligned basic segment">
+                            <button class="ui inverted grey big button" style="color: #787878" onclick="mostrarRegistrarse()"><i class="signup icon"></i>Registrarse</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui stackable grid container" id="registrarse" style="display: none">
+                    <div class="sixteen wide column">
+                        <h:form>
+                            <div class="ui segments">
+                                <div class="ui grey segment">
+                                    <h4 class="ui header blue text horizontal divider" style="padding: 10px">Registrarse</h4>
+                                    <div class="ui labeled fluid input" style="margin-top: 16px">
+                                        <div class="ui basic label">Nombre:</div>
+                                        <h:inputText id="nombre" value="#{usuarioController.name}" title="Ingrese un nombre para el usuario..." />
+                                    </div>
+                                    <div class="ui labeled fluid input" style="margin-top: 16px">
+                                        <div class="ui basic label">Apellido:</div>
+                                        <h:inputText id="apellido" value="#{usuarioController.lastname}" title="Ingrese un apellido para el usuario..." />
+                                    </div>
+                                    <div class="ui labeled fluid input field" style="margin-top: 16px">
+                                        <div class="ui basic label">Username:</div>
+                                        <h:inputText id="username" value="#{usuarioController.username}" title="Ingrese un username o nombre de usuario..." />
+                                    </div>
+                                    <div class="ui labeled fluid input" style="margin-top: 16px">
+                                        <div class="ui basic label">Email:</div>
+                                        <h:inputText value="#{usuarioController.email}" id="email" title="Ingrese un email para el usuario..." />
+                                    </div>
+                                    <div class="ui labeled fluid input" style="margin-top: 16px">
+                                        <div class="ui basic label">Contrase&ntilde;a:</div>
+                                        <h:inputSecret value="#{usuarioController.password}" id="password" title="Ingrese una contrase&ntilde;a para el usuario..." />
+                                    </div>
+                                    <div style="margin-top: 16px">
+                                        <h:selectOneMenu class="ui fluid dropdown" value="#{usuarioController.rol}" id="rol">
+                                            <f:selectItems value="#{rolController.findAll()}" var="rol" itemLabel="#{rol.name}" itemValue="#{rol.id}" />
+                                        </h:selectOneMenu>   
+                                    </div>
+                                </div>
+                                <div class="ui secondary center aligned segment">
+                                    <h:commandButton value="Confirmar" class="ui compact big positive button" >
+                                        <f:ajax execute="nombre apellido username email password rol" listener="#{usuarioController.create()}" onevent="function(response){if(response.status === 'success'){mostrarExitoUsuario();}}" />
+                                    </h:commandButton>
+                                </div>
+                            </div>
+                        </h:form>
+                    </div>
+                    <div class="sixteen wide column" style="padding: 40px">
+                        <div class="ui center aligned basic segment">
+                            <button class="ui inverted grey big button" style="color: #787878" onclick="mostrarLogin()"><i class="arrow left icon"></i>Volver al Login</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui active page dimmer" id="dimmer2" style="display: none">
+            <div class="content">
+                <div class="center">
+                    <div class="row" id="exitoUsuario" style="display: none">
+                        <h1 class="ui header inverted text">Usuario ingresado correctamente!</h1>
+                        <h3 class="ui header inverted text small">A continuaci&oacute;n se iniciar&aacute; sesi&oacute;n</h3>
+                        <button class="ui icon button circular inverted large green" onclick="ocultarDimmer()"><i class="checkmark large icon"></i></button>
+                    </div>
+                    <div class="row" id="errorUsuario" style="display: none">
+                        <h1 class="ui header inverted text">No se ha podido ingresar el usuario.</h1>
+                        <h3 class="ui header inverted small text">Es posible que el nombre de usuario ya est&eacute; tomado.</h3>
+                        <button class="ui icon button circular inverted large red" onclick="ocultarDimmer()"><i class="warning large icon"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('.ui.dropdown').dropdown();
+            });
+            function mostrarRegistrarse() {
+                $('#login').transition({
+                    animation: 'fade down',
+                    onComplete: function () {
+                        $('#registrarse').transition('fade up');
+                    }
+                });
+            }
+            function mostrarLogin() {
+                $('#registrarse').transition({
+                    animation: 'fade down',
+                    onComplete: function () {
+                        $('#login').transition('fade up');
+                    }
+                });
+            }
+
+            function mostrarExitoUsuario() {
+                alert(document.getElementById("reg").value);
+                $('#dimmer2').transition('fade');
+                document.getElementById("exitoUsuario").style.display = "block";
+                document.getElementById("errorUsuario").style.display = "none";
+            }
+
+            function mostrarErrorUsuario() {
+                $('#dimmer2').transition('fade');
+                document.getElementById("exitoUsuario").style.display = "none";
+                document.getElementById("errorUsuario").style.display = "block";
+            }
+
+            function ocultarDimmer() {
+                $('#dimmer2').transition('fade');
+                document.getElementById("exitoUsuario").style.display = "none";
+                document.getElementById("errorUsuario").style.display = "none";
+            }
+
+            function ocultarDimmerLogin() {
+                $('#dimmer2').transition('fade');
+                document.getElementById("exitoUsuario").style.display = "none";
+                document.getElementById("errorUsuario").style.display = "none";
+                document.getElementById("usernameLogin").value = document.getElementById("username").value;
+                document.getElementById("passwordLogin").value = document.getElementById("password").value;
+                document.getElementById("form").submit();
+            }
+        </script>
+    </h:body>
+</html>
+
