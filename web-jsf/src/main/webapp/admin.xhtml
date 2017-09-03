@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui" xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
     <h:head>
         <meta charset="UTF-8"/>
         <meta http-equiv="x-ua-compatible" content="ie=edge"/>
@@ -10,7 +12,7 @@
         <script src="resources/js/jquery.js"></script>
         <script src="resources/js/semantic.min.js"></script>
     </h:head>
-    <h:body>
+    <h:body style="background-color: #FCFCFC">
         <div class="ui secondary menu">
             <h3 class="ui header item"><i class="grey home icon"></i>Practico1</h3>
             <div class="right menu">
@@ -20,43 +22,49 @@
                 </h:form>
             </div>
         </div>
-        <div class="ui center aligned container" style="padding: 48px; padding-top: 64px" id="listado">
-            <h1 class="ui header text icon title green horizontal divider" style="padding: 16px"><i class=" users grey icon"></i>Usuarios</h1>
-            <div class="ui text container">
-                <div class="ui fluid icon input">
-                    <i class="search link icon"></i>
-                    <input id="filtro" type="text" placeholder="Buscar por username...">
+        <div id="listado">
+            <div class="ui text center aligned container">
+                <h1 class="ui header text icon title grey horizontal divider" style="padding: 16px"><i class="users green icon"></i>Usuarios</h1>
+            </div>
+            <div class="ui left aligned basic secondary segment" style="padding: 16px;">
+                <div class="ui text container">
+                    <div class="ui secondary menu grid">
+                        <div class="row" style="padding: 7px">
+                            <div class="ui text container">
+                                <h:form>
+                                    <div class="ui fluid icon input">
+                                        <p:commandLink><i class="search link icon"></i></p:commandLink>
+                                        <p:inputText id="filtro" value="#{usuarioController.filtro}" placeholder="Buscar por username..." />
+                                    </div>
+                                </h:form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="ui right aligned basic segment" style="padding-top: 48px">
-                <button class="ui button" onclick="mostrarRoles()"><i class="tags icon"></i>Crear Rol</button>
-                <button class="ui positive button" onclick="mostrarNuevo()"><i class="add user icon"></i>Crear Usuario</button>
+            <div class="ui center aligned container">
+                <button class="ui large basic button" onclick="mostrarRoles()"><i class="tags green icon"></i>Roles</button>
+                <button class="ui large basic button" onclick="mostrarNuevo()"><i class="users green icon"></i>Usuarios</button>
+                <button class="ui large basic button"><i class="history green icon"></i>Sesiones</button>
             </div>
-            <table class="ui celled very basic selectable table">
-                <thead>
-                    <tr class="ui small header">
-                        <th style="width: 30%">Username</th>
-                        <th>Email</th>
-                        <th style="width: 20%">Rol</th>
-                    </tr>
-                </thead>
-                <tbody id="usuariosList"></tbody>
-                <tfoot>
-                    <tr>
-                        <th colspan="3">
-                            <div class="ui right floated pagination menu">
-                                <a class="icon item" onclick="cargarUsuarios_anterior()">
-                                    <i class="left chevron icon"></i>
-                                </a>
-                                <a id="pag" class="disabled item header">1</a>
-                                <a class="icon item" onclick="cargarUsuarios_siguiente()">
-                                    <i class="right chevron icon"></i>
-                                </a>
-                            </div>
-                        </th>
-                    </tr>
-                </tfoot>
-            </table>
+            <div class="ui center aligned container" style="padding: 48px; padding-top: 64px">
+                <h:dataTable styleClass="ui celled very basic selectable table" id="usuariosList" value="#{usuarioController.findAll()}" var="usuario" headerClass="ui header text small grey" >
+                    <h:column><f:facet name="header">Username</f:facet>#{usuario.username}</h:column>
+                    <h:column><f:facet name="header">Email</f:facet>#{usuario.email}</h:column>
+                    <h:column><f:facet name="header">Rol</f:facet>#{usuario.roleid.name}</h:column>
+                </h:dataTable>
+                <div class="ui basic center aligned segment">
+                    <div class="ui right floated pagination secondary menu" style="padding: 7px">
+                        <a class="icon item">
+                            <i class="left chevron icon"></i>
+                        </a>
+                        <a class="disabled item header">1</a>
+                        <a class="icon item">
+                            <i class="right chevron icon"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="ui center aligned container" style="padding: 28px; display: none" id="nuevo">
             <h1 class="ui header text icon title green horizontal divider" style="padding: 16px"><i class="add user grey icon"></i>Usuario Nuevo</h1>
@@ -64,7 +72,7 @@
                 <h:form>
                     <div class="ui fluid labeled input">
                         <div class="ui basic label">Nombre</div>
-                        <h:inputText id="nombreNuevo" value="#{usuarioController.name}" title="Ingrese aqu&iac&iacute; el nombre..." />
+                        <h:inputText id="nombreNuevo" value="#{usuarioController.name}" title="Ingrese aqu&iacute; el nombre..." />
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Apellido</div>
@@ -88,7 +96,7 @@
                     </h:selectOneMenu> 
                     <div class="row" style="padding: 30px">
                         <button class="ui button" onclick="mostrarListado()"><i class="left arrow icon"></i>Volver al listado</button>
-                        <h:commandButton class="ui positive button" value="Guardar" type="submit" action="#{usuarioController.create()}" />
+                        <p:commandButton value="Confirmar" class="ui compact positive button" actionListener="#{usuarioController.create}" oncomplete="registroCompletado(xhr, status, args)" />
                     </div>
                 </h:form>
             </div>
@@ -99,16 +107,16 @@
                 <h:form>
                     <div class="ui fluid labeled input">
                         <div class="ui basic label">Nombre</div>
-                        <h:inputText id="rolNuevo" value="#{rolController.nombre}" title="Ingrese aqu&iac&iacute; un nombre para el rol..." /> 
+                        <h:inputText id="rolNuevo" value="#{rolController.nombre}" title="Ingrese aqu&iacute; un nombre para el rol..." /> 
                     </div>
                     <div class="ui reply form" style="margin-top: 16px">
                         <div class="field">
-                            <h:inputTextarea id="descripcionNuevo" value="#{rolController.descripcion}" title="Ingrese aqu&iacute; una descripci&oa&oacute;n para el rol..." style="min-height: 100px; max-width: 100%; min-width: 100%; max-height: 150px" />
+                            <h:inputTextarea id="descripcionNuevo" value="#{rolController.descripcion}" title="Ingrese aqu&iacute; una descripci&oacute;n para el rol..." style="min-height: 100px; max-width: 100%; min-width: 100%; max-height: 150px" />
                         </div>
                     </div>
                     <div class="row" style="padding: 30px">
                         <button class="ui button" onclick="mostrarListadoRoles()"><i class="left arrow icon"></i>Volver al listado</button>
-                        <h:commandButton class="ui positive button" type="submit" action="#{rolController.create()}" value="Confirmar" />
+                        <p:commandButton value="Confirmar" class="ui positive button" actionListener="#{rolController.create}" oncomplete="rolCreado(xhr, status, args)" />
                     </div>
                 </h:form>
             </div>
@@ -128,130 +136,113 @@
                         <h1 class="ui header inverted text">No se ha podido ingresar el usuario.</h1>
                         <button class="ui icon button circular inverted large red" onclick="ocultarDimmer()"><i class="warning large icon"></i></button>
                     </div>
+                    <div class="row" id="error" style="display: none">
+                        <h1 class="ui header inverted text">Ha ocurrido un error.</h1>
+                        <h3 class="ui header inverted small text">Por favor vuelve a intentar mas tarde...</h3>
+                        <button class="ui icon button circular inverted large red" onclick="ocultarDimmer()"><i class="warning large icon"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="ui small modal">
             <div class="ui icon header green"><i class="user circle outline black icon"></i><span id="usernameMod"></span></div>
-            <div class="content">
-                <div class="ui inverted active loading dimmer" style="display: block" id="dimmer">
-                    <div class="content">
-                        <div class="center">
-                            <div class="ui text loader large" id="loaderM" style="display: block">Cargando informaci&oacute;n...</div>
-                            <div class="ui blurring basic segment" id="confirmation" style="display: none">
-                                <h2 class="ui header text">Se eliminar&aacute; el usuario <span class="ui green text header small" id="usuarioActual"></span>.</h2>
-                                <h3 class="ui header text grey">&iquest;Confirmar?</h3>
-                                <button class="ui button" onclick="ocultarDimmerModal()">Cancelar</button>
-                                <button class="ui black button" onclick="eliminarUsuario()">Eliminar</button>
-                            </div>
-                            <div class="ui blurring basic segment" id="exitoDel" style="display: none">
-                                <h2 class="ui header text">El usuario ha sido eliminado.</h2>
-                                <button class="ui icon circular button inverted green large" onclick="ocultarDimmerModal()"><i class="checkmark icon large"></i></button>
-                            </div>
-                            <div class="ui blurring basic segment" id="exitoMod" style="display: none">
-                                <h2 class="ui header text">Informaci&oacute;n actualizada correctamente!</h2>
-                                <button class="ui icon circular button inverted green large" onclick="ocultarDimmerModal()"><i class="checkmark icon large"></i></button>
+            <h:form>
+                <div class="content">
+                    <div class="ui inverted active loading dimmer" style="display: block" id="dimmer">
+                        <div class="content">
+                            <div class="center">
+                                <div class="ui text loader large" id="loaderM" style="display: block">Cargando informaci&oacute;n...</div>
+                                <div class="ui blurring basic segment" id="confirmation" style="display: none">
+                                    <h2 class="ui header text">Se eliminar&aacute; el usuario <span class="ui green text header small" id="usuarioActual">#{usuarioController.username}</span>.</h2>
+                                    <h3 class="ui header text grey">&iquest;Confirmar?</h3>
+                                    <button class="ui button" onclick="ocultarDimmerModal()">Cancelar</button>
+                                    <button class="ui black button" onclick="eliminarUsuario()">Eliminar</button>
+                                </div>
+                                <div class="ui blurring basic segment" id="exitoDel" style="display: none">
+                                    <h2 class="ui header text">El usuario ha sido eliminado.</h2>
+                                    <button class="ui icon circular button inverted green large" onclick="ocultarDimmerModal()"><i class="checkmark icon large"></i></button>
+                                </div>
+                                <div class="ui blurring basic segment" id="exitoMod" style="display: none">
+                                    <h2 class="ui header text">Informaci&oacute;n actualizada correctamente!</h2>
+                                    <button class="ui icon circular button inverted green large" onclick="ocultarDimmerModal()"><i class="checkmark icon large"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="ui fluid labeled input">
+                        <div class="ui basic label">Nombre</div>
+                        <h:inputText id="nombreMod" value="#{usuarioController.username}" />
+                    </div>
+                    <div class="ui fluid labeled input" style="margin-top: 16px">
+                        <h:inputText id="apellidoMod" value="#{usuarioController.lastname}" />
+                    </div>
+                    <div class="ui fluid labeled input" style="margin-top: 16px">
+                        <div class="ui basic label">Email</div>
+                        <h:inputText id="emailMod" value="#{usuarioController.email}" />
+                    </div>
+                    <div class="ui fluid labeled input" style="margin-top: 16px">
+                        <div class="ui basic label">Contrase&ntilde;a</div>
+                        <h:inputSecret id="passwordMod" value="#{usuarioController.password}" />
+                    </div>
+                    <div style="margin-top: 16px">
+                        <h:selectOneMenu class="ui fluid dropdown" value="#{usuarioController.rol}" id="rolMod">
+                            <f:selectItems value="#{rolController.findAll()}" var="rol" itemLabel="#{rol.name}" itemValue="#{rol.id}" />
+                        </h:selectOneMenu>   
+                    </div>
                 </div>
-                <div class="ui fluid labeled input">
-                    <div class="ui basic label">Nombre</div>
-                    <input id="nombreMod" type="text" placeholder="Ingrese aqu&iacute; el nombre del usuario...">
+                <div class="footer">
+                    <div class="ui secondary basic right aligned segment">
+                        <p:commandButton value="Eliminar" class="ui red inverted button" actionListener="#{usuarioController.delete}" oncomplete="usuarioEliminado(xhr, status, args)" />
+                        <p:commandButton value="Guardar cambios" class="ui positive button" actionListener="#{usuarioController.update}" oncomplete="usuarioModificado(xhr, status, args)" />
+                    </div>
                 </div>
-                <div class="ui fluid labeled input" style="margin-top: 16px">
-                    <div class="ui basic label">Apellido</div>
-                    <input id="apellidoMod" type="text" placeholder="Ingrese aqu&iacute; el apellido del usuario...">
-                </div>
-                <div class="ui fluid labeled input" style="margin-top: 16px">
-                    <div class="ui basic label">Email</div>
-                    <input id="emailMod" type="text" placeholder="Ingrese aqu&iacute; el email del usuario...">
-                </div>
-                <div class="ui fluid labeled input" style="margin-top: 16px">
-                    <div class="ui basic label">Contrase&ntilde;a</div>
-                    <input id="passwordMod" type="password" placeholder="Ingrese aqu&iacute; una contrase&ntilde;a..">
-                </div>
-                <div class="row" style="margin-top: 16px"><select id="rolMod" class="ui fluid dropdown"></select></div>
-            </div>
-            <div class="footer">
-                <div class="ui secondary basic right aligned segment">
-                    <div class="ui cancel red inverted button" onclick="mostrarConfirmacion()">Eliminar</div>
-                    <div class="ui approve positive button" onclick="modificarUsuario()">Guardar cambios</div>
-                </div>
-            </div>
+            </h:form>
         </div>
         <script>
             $(document).ready(function () {
                 $('.ui.dropdown').dropdown();
-                cargarRoles();
-                cargarUsuarios(1);
             });
 
-            function registrarUsuario() {
-                var nombre = document.getElementById("nombreNuevo").value;
-                var apellido = document.getElementById("apellidoNuevo").value;
-                var username = document.getElementById("usernameNuevo").value;
-                var email = document.getElementById("emailNuevo").value;
-                var password = document.getElementById("passwordNuevo").value;
-                var rol = document.getElementById("rolSeleccionado").value;
-                if (rol !== undefined && username !== undefined && username !== "") {
-                    $.post("http://localhost:8080/web/api/usuarios?nombre=" + nombre + "&apellido=" + apellido + "&username=" + username + "&email=" + email + "&password=" + password + "&rol=" + rol, function (response) {
-                        if (response !== undefined) {
-                            if (response === true) {
-                                document.getElementById("nombreNuevo").value = "";
-                                document.getElementById("apellidoNuevo").value = "";
-                                document.getElementById("usernameNuevo").value = "";
-                                document.getElementById("emailNuevo").value = "";
-                                document.getElementById("passwordNuevo").value = "";
-                                document.getElementById("rolSeleccionado").value = "";
-                                mostrarListado();
-                                mostrarExitoUsuario();
-                                cargarUsuarios(1);
-                            }
-                        }
-                    });
-                }
-            }
-
-            function eliminarUsuario() {
-                var username = document.getElementById("usuarioActual").innerHTML;
-                if (username !== undefined && username !== "") {
-                    var url = "http://localhost:8080/web/api/usuarios/" + username;
-                    $.ajax({
-                        url: url,
-                        type: 'DELETE',
-                        success: function (response) {
-                            if (response !== undefined) {
-                                if (response === true || response === "true") {
-                                    cargarUsuarios(1);
-                                    mostrarExitoDel();
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-
-            function modificarUsuario() {
-                var nombre = document.getElementById("nombreMod").value;
-                var apellido = document.getElementById("apellidoMod").value;
-                var email = document.getElementById("emailMod").value;
-                var password = document.getElementById("passwordMod").value;
-                var username = document.getElementById("usernameMod").innerHTML;
-                var rol = document.getElementById("rolMod").value;
-                var params = "username=" + username + "&nombre=" + nombre + "&apellido=" + apellido + "&email=" + email + "&password=" + password + "&rol=" + rol;
-                $.ajax({
-                    url: 'http://localhost:8080/web/api/usuarios?' + params,
-                    type: 'PUT',
-                    success: function (response) {
-                        if (response !== undefined) {
-                            if (response === true || response === true) {
-                                cargarUsuarios(1);
-                                mostrarExitoMod();
-                            }
-                        }
+            function registroCompletado(xhr, status, args) {
+                if (status === "success") {
+                    if (args.exito === true || args.exito === "true") {
+                        mostrarExitoUsuario();
+                    } else if (args.exito === false || args.exito === "false") {
+                        mostrarErrorUsuario();
                     }
-                });
+                } else if (status === "error") {
+                    mostrarError();
+                }
+            }
+
+            function usuarioModificado(xhr, status, args) {
+                if (status === "success") {
+                    if (args.exito === true || args.exito === "true") {
+                        mostrarExitoMod();
+                    }
+                } else if (status === "error") {
+                    mostrarError();
+                }
+            }
+
+            function usuarioEliminado(xhr, status, args) {
+                if (status === "success") {
+                    if (args.exito === true || args.exito === "true") {
+                        mostrarExitoDel();
+                    }
+                } else if (status === "error") {
+                    mostrarError();
+                }
+            }
+
+            function rolCreado(xhr, status, args) {
+                if (status === "success") {
+                    if (args.exito === true || args.exito === "true") {
+                        mostrarExitoRol();
+                    }
+                } else if (status === "error") {
+                    mostrarError();
+                }
             }
 
             function cargarUsuario(username) {
@@ -274,36 +265,6 @@
                 }
             }
 
-            function cargarUsuarios(pag) {
-                var filtro = document.getElementById("filtro").value;
-                if (pag === undefined) {
-                    pag = 1;
-                }
-                $.get("http://localhost:8080/web/api/usuarios?filtro=" + filtro + "&pagina=" + pag, function (response) {
-                    if (response !== undefined) {
-                        while (document.getElementById("usuariosList").hasChildNodes()) {
-                            document.getElementById("usuariosList").removeChild(document.getElementById("usuariosList").lastChild);
-                        }
-                        $.each(response, function (index, usuario) {
-                            var tr = document.createElement("tr");
-                            tr.addEventListener("dblclick", function () {
-                                cargarUsuario(usuario.username);
-                            });
-                            var td1 = document.createElement("td");
-                            td1.innerHTML = usuario.username;
-                            var td2 = document.createElement("td");
-                            td2.innerHTML = usuario.email;
-                            var td3 = document.createElement("td");
-                            td3.innerHTML = usuario.roleid.name;
-                            tr.appendChild(td1);
-                            tr.appendChild(td2);
-                            tr.appendChild(td3);
-                            document.getElementById("usuariosList").appendChild(tr);
-                        });
-                    }
-                });
-            }
-
             function cargarUsuarios_siguiente() {
                 if (document.getElementById("usuariosList").childNodes.length >= 10) {
                     cargarUsuarios((Number(document.getElementById("pag").innerHTML) + 1));
@@ -316,49 +277,6 @@
                     cargarUsuarios((paginaActual - 1));
                     document.getElementById("pag").innerHTML = (paginaActual - 1).toString();
                 }
-            }
-
-            function cargarRoles() {
-                $.get("http://localhost:8080/web/api/roles", function (response) {
-                    if (response !== undefined) {
-                        while (document.getElementById("rolSeleccionado").hasChildNodes()) {
-                            document.getElementById("rolSeleccionado").removeChild(document.getElementById("rolSeleccionado").lastChild);
-                        }
-                        while (document.getElementById("rolMod").hasChildNodes()) {
-                            document.getElementById("rolMod").removeChild(document.getElementById("rolMod").lastChild);
-                        }
-                        $.each(response, function (index, rol) {
-                            var option = document.createElement("option");
-                            option.value = rol.id;
-                            option.innerHTML = rol.name;
-                            document.getElementById("rolSeleccionado").appendChild(option);
-                            var option2 = document.createElement("option");
-                            option2.value = rol.id;
-                            option2.innerHTML = rol.name;
-                            document.getElementById("rolMod").appendChild(option2);
-                        });
-                        var option3 = document.createElement("option");
-                        option3.value = "";
-                        option3.innerHTML = "Seleccione un Rol para el usuario...";
-                        document.getElementById("rolSeleccionado").appendChild(option3);
-                    }
-                });
-            }
-
-            function crearRol() {
-                var nombre = document.getElementById("rolNuevo").value;
-                var descripcion = document.getElementById("descripcionNuevo").value;
-                $.post("http://localhost:8080/web/api/roles?nombre=" + nombre + "&descripcion=" + descripcion, function (response) {
-                    if (response !== undefined) {
-                        if (response === true) {
-                            document.getElementById("rolNuevo").value = "";
-                            document.getElementById("descripcionNuevo").value = "";
-                            cargarRoles();
-                            mostrarListadoRoles();
-                            mostrarExitoRol();
-                        }
-                    }
-                });
             }
 
             function mostrarNuevo() {
@@ -402,27 +320,39 @@
                 document.getElementById("exitoRol").style.display = "block";
                 document.getElementById("exitoUsuario").style.display = "none";
                 document.getElementById("errorUsuario").style.display = "none";
+                document.getElementById("error").style.display = "none";
             }
 
             function mostrarExitoUsuario() {
                 $('#dimmer2').transition('fade');
-                document.getElementById("exitoRol").style.display = "none";
                 document.getElementById("exitoUsuario").style.display = "block";
                 document.getElementById("errorUsuario").style.display = "none";
+                document.getElementById("error").style.display = "none";
+                document.getElementById("exitoRol").style.display = "none";
+            }
+
+            function mostrarError() {
+                $('#dimmer2').transition('fade');
+                document.getElementById("exitoUsuario").style.display = "none";
+                document.getElementById("errorUsuario").style.display = "none";
+                document.getElementById("error").style.display = "block";
+                document.getElementById("exitoRol").style.display = "none";
             }
 
             function mostrarErrorUsuario() {
                 $('#dimmer2').transition('fade');
-                document.getElementById("exitoRol").style.display = "none";
                 document.getElementById("exitoUsuario").style.display = "none";
                 document.getElementById("errorUsuario").style.display = "block";
+                document.getElementById("error").style.display = "none";
+                document.getElementById("exitoRol").style.display = "none";
             }
 
             function ocultarDimmer() {
                 $('#dimmer2').transition('fade');
-                document.getElementById("exitoRol").style.display = "none";
                 document.getElementById("exitoUsuario").style.display = "none";
                 document.getElementById("errorUsuario").style.display = "none";
+                document.getElementById("error").style.display = "none";
+                document.getElementById("exitoRol").style.display = "none";
             }
 
             function mostrarExitoMod() {

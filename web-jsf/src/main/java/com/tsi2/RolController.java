@@ -4,8 +4,10 @@ import com.tsi2.entidades.Rol;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.primefaces.context.RequestContext;
 
 @ManagedBean(name = "rolController")
 @ViewScoped
@@ -21,25 +23,11 @@ public class RolController {
     public RolController() {
     }
 
-    public void create() {
+    public void create(ActionEvent event) {
+        RequestContext context = RequestContext.getCurrentInstance();
         Rol r = new Rol(nombre, descripcion);
         em.persist(r);
-    }
-
-    public void update() {
-        Rol r = find();
-        if (r != null) {
-            r.setName(nombre);
-            r.setDescription(descripcion);
-            em.persist(r);
-        }
-    }
-
-    public void delete() {
-        Rol r = find();
-        if (r != null) {
-            em.remove(r);
-        }
+        context.addCallbackParam("exito", true);
     }
 
     public Rol find() {

@@ -18,36 +18,6 @@
         </div>
         <div class="ui container" style="padding: 16px">
             <div class="ui text container">
-                <div class="ui icon error message" id="errorPermiso" style="display: none">
-                    <i class="warning circle icon"></i>
-                    <i class="close icon"></i>
-                    <div class="content">
-                        <div class="header">
-                            Acceso restringido para administradores.
-                        </div>
-                        <p>Es posible que no tengas los privilegios adecuados para acceder a esa url.</p>
-                    </div>
-                </div>
-                <div class="ui icon error message" id="errorSesion" style="display: none">
-                    <i class="warning circle icon"></i>
-                    <i class="close icon"></i>
-                    <div class="content">
-                        <div class="header">
-                            Inicio de sesi&oacute;n requerido.
-                        </div>
-                        <p>Debes haberte autenticado para tener acceso a esa secci&oacute;n.</p>
-                    </div>
-                </div>
-                <div class="ui icon error message" id="errorUsuario" style="display: none">
-                    <i class="warning circle icon"></i>
-                    <i class="close icon"></i>
-                    <div class="content">
-                        <div class="header">
-                            Credenciales invalidas.
-                        </div>
-                        <p>El usuario con el que intentas acceder no existe, o las credenciales son incorrectas.</p>
-                    </div>
-                </div>
                 <div class="ui stackable grid container" id="login">
                     <div class="sixteen wide column">
                         <h:form>
@@ -108,9 +78,7 @@
                                     </div>
                                 </div>
                                 <div class="ui secondary center aligned segment">
-                                    <h:commandButton value="Confirmar" class="ui compact big positive button" >
-                                        <f:ajax execute="nombre apellido username email password rol" listener="#{usuarioController.create()}" onevent="function(response){if(response.status === 'success'){mostrarExitoUsuario();}}" />
-                                    </h:commandButton>
+                                    <p:commandButton value="Confirmar" class="ui compact positive button" actionListener="#{usuarioController.create}" oncomplete="registroCompletado(xhr, status, args)" />
                                 </div>
                             </div>
                         </h:form>
@@ -128,12 +96,16 @@
                 <div class="center">
                     <div class="row" id="exitoUsuario" style="display: none">
                         <h1 class="ui header inverted text">Usuario ingresado correctamente!</h1>
-                        <h3 class="ui header inverted text small">A continuaci&oacute;n se iniciar&aacute; sesi&oacute;n</h3>
                         <button class="ui icon button circular inverted large green" onclick="ocultarDimmer()"><i class="checkmark large icon"></i></button>
                     </div>
                     <div class="row" id="errorUsuario" style="display: none">
                         <h1 class="ui header inverted text">No se ha podido ingresar el usuario.</h1>
-                        <h3 class="ui header inverted small text">Es posible que el nombre de usuario ya est&eacute; tomado.</h3>
+                        <h3 class="ui header inverted small text">Es posible que el username ya est&eacute; tomado.</h3>
+                        <button class="ui icon button circular inverted large red" onclick="ocultarDimmer()"><i class="warning large icon"></i></button>
+                    </div>
+                    <div class="row" id="error" style="display: none">
+                        <h1 class="ui header inverted text">Ha ocurrido un error.</h1>
+                        <h3 class="ui header inverted small text">Por favor vuelve a intentar mas tarde...</h3>
                         <button class="ui icon button circular inverted large red" onclick="ocultarDimmer()"><i class="warning large icon"></i></button>
                     </div>
                 </div>
@@ -159,33 +131,47 @@
                     }
                 });
             }
+            
+            function registroCompletado(xhr, status, args){
+                if(status === "success"){
+                    if(args.exito === true || args.exito === "true"){
+                        mostrarExitoUsuario();
+                    }
+                    else if(args.exito === false || args.exito === "false"){
+                        mostrarErrorUsuario();
+                    }
+                }
+                else if(status === "error"){
+                    mostrarError();
+                }
+            }
 
             function mostrarExitoUsuario() {
-                alert(document.getElementById("reg").value);
                 $('#dimmer2').transition('fade');
                 document.getElementById("exitoUsuario").style.display = "block";
                 document.getElementById("errorUsuario").style.display = "none";
+                document.getElementById("error").style.display = "none";
+            }
+            
+            function mostrarError() {
+                $('#dimmer2').transition('fade');
+                document.getElementById("exitoUsuario").style.display = "none";
+                document.getElementById("errorUsuario").style.display = "none";
+                document.getElementById("error").style.display = "block";
             }
 
             function mostrarErrorUsuario() {
                 $('#dimmer2').transition('fade');
                 document.getElementById("exitoUsuario").style.display = "none";
                 document.getElementById("errorUsuario").style.display = "block";
+                document.getElementById("error").style.display = "none";
             }
 
             function ocultarDimmer() {
                 $('#dimmer2').transition('fade');
                 document.getElementById("exitoUsuario").style.display = "none";
                 document.getElementById("errorUsuario").style.display = "none";
-            }
-
-            function ocultarDimmerLogin() {
-                $('#dimmer2').transition('fade');
-                document.getElementById("exitoUsuario").style.display = "none";
-                document.getElementById("errorUsuario").style.display = "none";
-                document.getElementById("usernameLogin").value = document.getElementById("username").value;
-                document.getElementById("passwordLogin").value = document.getElementById("password").value;
-                document.getElementById("form").submit();
+                document.getElementById("error").style.display = "none";
             }
         </script>
     </h:body>

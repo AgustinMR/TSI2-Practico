@@ -19,7 +19,7 @@ public class UsuarioController implements Serializable {
 
     @PersistenceContext(unitName = "com.tsi2_web-jsf_war_1.0PU")
     private EntityManager em;
-    
+
     private String name;
     private String lastname;
     private String username;
@@ -27,75 +27,113 @@ public class UsuarioController implements Serializable {
     private String password;
     private int rol;
     private String filtro;
-    private int pagina;
+    private int pagina = 1;
+    private int cant;
     private String usernameLogin;
     private String passwordLogin;
     private String rolLogin;
-    private boolean registrado;
 
     public UsuarioController() {
+      
     }
-    
-    public void create(ActionEvent event) throws Exception {
+
+    public void create(ActionEvent event) {
         RequestContext context = RequestContext.getCurrentInstance();
         Usuario u = find();
-        if(u == null){
+        if (u == null) {
             Rol r = em.find(Rol.class, rol);
-            if(r == null) r = em.createQuery("SELECT r FROM Rol r", Rol.class).getSingleResult();
+            if (r == null) {
+                r = em.createQuery("SELECT r FROM Rol r", Rol.class).getSingleResult();
+            }
             u = new Usuario(username, password, name, lastname, email, r);
             em.persist(u);
             context.addCallbackParam("exito", exists(u));
         }
     }
-    
-    public void update() throws Exception {
+
+    public void update(ActionEvent event) {
+        RequestContext context = RequestContext.getCurrentInstance();
         Usuario u = find();
-        if(u != null){
+        if (u != null) {
             u.setName(name);
             u.setLastname(lastname);
             u.setEmail(email);
             u.setPassword(password);
             Rol r = em.find(Rol.class, rol);
-            if(r != null) u.setRoleid(r);
+            if (r != null) {
+                u.setRoleid(r);
+            }
             em.persist(u);
+            context.addCallbackParam("exito", true);
+        } else {
+            context.addCallbackParam("exito", false);
         }
     }
-    
-    public void delete() throws Exception {
+
+    public void delete(ActionEvent event) {
+        RequestContext context = RequestContext.getCurrentInstance();
         Usuario u = find();
-        if(u != null) em.remove(u);
+        if (u != null) {
+            em.remove(u);
+            context.addCallbackParam("exito", !exists(u));
+        } else {
+            context.addCallbackParam("exito", false);
+        }
     }
-    
-    public String login(){
+
+    public String login() {
         Usuario u = em.find(Usuario.class, usernameLogin);
-        if(u == null) return "index";
-        if(!u.getPassword().equals(passwordLogin)) return "index";
-        if(u.getRoleid().getId() == 1){
+        if (u == null) {
+            return "index";
+        }
+        if (!u.getPassword().equals(passwordLogin)) {
+            return "index";
+        }
+        if (u.getRoleid().getId() == 1) {
             setRolLogin("Admin");
+            setPagina(1);
             return "admin";
-        }else{
+        } else {
             setRolLogin("Usuario");
             return "usuario";
         }
     }
-    
-    public String logout(){
+
+    public String logout() {
         setUsernameLogin(null);
         setRolLogin(null);
         return "index";
     }
-    
-    public boolean exists(Usuario u){
+
+    public boolean exists(Usuario u) {
         return em.contains(u);
     }
-    
-    public Usuario find(){
+
+    public Usuario find() {
         return em.find(Usuario.class, username);
     }
     
-    public List<Usuario> findAll(){
+    public void listarSiguiente(){
+        if(cant >= 10) findAll();
+    }
+    
+    public void listarAnterior(){
+        if(pagina > 1){
+            pagina -= 1;
+            findAll();
+        }
+    }
+
+    public List<Usuario> findAll() {
+        /*if(pagina <= 0) pagina = 1; 
         int skip = ((pagina * 10) - 10);
-        return em.createQuery("SELECT u FROM Usuario u WHERE u.username LIKE :f ORDER BY u.creationDate DESC", Usuario.class).setParameter("f", "%" + filtro + "%").setMaxResults(10).setFirstResult(skip).getResultList();
+        List<Usuario> ret;
+        if(skip < 0) ret = em.createQuery("SELECT u FROM Usuario u WHERE u.username LIKE :f ORDER BY u.creationDate DESC", Usuario.class).setParameter("f", "%" + filtro + "%").setMaxResults(10).setFirstResult(0).getResultList();
+        else ret = em.createQuery("SELECT u FROM Usuario u WHERE u.username LIKE :f ORDER BY u.creationDate DESC", Usuario.class).setParameter("f", "%" + filtro + "%").setMaxResults(10).setFirstResult(0).getResultList();
+        pagina += 1;
+        cant = ret.size();
+        return ret;*/
+        return em.createQuery("SELECT u FROM Usuario u", Usuario.class).getResultList();
     }
 
     public String getName() {
@@ -130,12 +168,12 @@ public class UsuarioController implements Serializable {
         this.username = username;
     }
 
-    public boolean isRegistrado() {
-        return registrado;
+    public int getCant() {
+        return cant;
     }
 
-    public void setRegistrado(boolean registrado) {
-        this.registrado = registrado;
+    public void setCant(int cant) {
+        this.cant = cant;
     }
 
     public String getEmail() {
