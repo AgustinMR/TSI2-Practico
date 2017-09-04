@@ -48,17 +48,30 @@
                 <button class="ui large basic button"><i class="history green icon"></i>Sesiones</button>
             </div>
             <div class="ui center aligned container" style="padding: 48px; padding-top: 64px">
-                <h:dataTable styleClass="ui celled very basic selectable table" id="usuariosList" value="#{usuarioController.findAll()}" var="usuario" headerClass="ui header text small grey" >
-                    <h:column><f:facet name="header">Username</f:facet>#{usuario.username}</h:column>
-                    <h:column><f:facet name="header">Email</f:facet>#{usuario.email}</h:column>
-                    <h:column><f:facet name="header">Rol</f:facet>#{usuario.roleid.name}</h:column>
-                </h:dataTable>
+                <table class="ui celled very basic selectable table">
+                    <thead>
+                        <th>
+                            <td class="ui header text small grey">Username</td>
+                            <td class="ui header text small grey">Email</td>
+                            <td class="ui header text small grey">Rol</td>
+                        </th>
+                    </thead>
+                    <tbody id="usuariosList">
+                        <ui:repeat var="usuario" value="#{usuarioController.findAll()}" varStatus="status">
+                            <tr>
+                                <td>#{usuario.username}</td>
+                                <td>#{usuario.email}</td>
+                                <td>#{usuario.roleid.name}</td>
+                            </tr>
+                        </ui:repeat>
+                    </tbody>
+                </table>
                 <div class="ui basic center aligned segment">
                     <div class="ui right floated pagination secondary menu" style="padding: 7px">
                         <a class="icon item">
                             <i class="left chevron icon"></i>
                         </a>
-                        <a class="disabled item header">1</a>
+                        <a class="disabled item header">#{usuarioController.pagina}</a>
                         <a class="icon item">
                             <i class="right chevron icon"></i>
                         </a>
@@ -95,8 +108,8 @@
                         <f:selectItems value="#{rolController.findAll()}" var="rol" itemLabel="#{rol.name}" itemValue="#{rol.id}" />
                     </h:selectOneMenu> 
                     <div class="row" style="padding: 30px">
-                        <button class="ui button" onclick="mostrarListado()"><i class="left arrow icon"></i>Volver al listado</button>
-                        <p:commandButton value="Confirmar" class="ui compact positive button" actionListener="#{usuarioController.create}" oncomplete="registroCompletado(xhr, status, args)" />
+                        <button type="button" class="ui button" onclick="mostrarListado()"><i class="left arrow icon"></i>Volver al listado</button>
+                        <p:commandButton value="Confirmar" styleClass="ui compact positive button" actionListener="#{usuarioController.create}" oncomplete="registroCompletado(xhr, status, args)" />
                     </div>
                 </h:form>
             </div>
@@ -115,8 +128,8 @@
                         </div>
                     </div>
                     <div class="row" style="padding: 30px">
-                        <button class="ui button" onclick="mostrarListadoRoles()"><i class="left arrow icon"></i>Volver al listado</button>
-                        <p:commandButton value="Confirmar" class="ui positive button" actionListener="#{rolController.create}" oncomplete="rolCreado(xhr, status, args)" />
+                        <button type="button" class="ui button" onclick="mostrarListadoRoles()"><i class="left arrow icon"></i>Volver al listado</button>
+                        <p:commandButton value="Confirmar" styleClass="ui positive button" actionListener="#{rolController.create}" oncomplete="rolCreado(xhr, status, args)" />
                     </div>
                 </h:form>
             </div>

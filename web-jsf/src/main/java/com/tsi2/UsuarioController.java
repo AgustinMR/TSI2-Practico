@@ -4,17 +4,17 @@ import com.tsi2.entidades.Rol;
 import com.tsi2.entidades.Usuario;
 import java.io.Serializable;
 import java.util.List;
+import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ActionEvent;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import org.primefaces.context.RequestContext;
 
 @SessionScoped
-@Named("usuarioController")
 @Transactional
+@Named("usuarioController")
 public class UsuarioController implements Serializable {
 
     @PersistenceContext(unitName = "com.tsi2_web-jsf_war_1.0PU")
@@ -27,7 +27,7 @@ public class UsuarioController implements Serializable {
     private String password;
     private int rol;
     private String filtro;
-    private int pagina = 1;
+    private int pagina;
     private int cant;
     private String usernameLogin;
     private String passwordLogin;
@@ -91,7 +91,6 @@ public class UsuarioController implements Serializable {
         }
         if (u.getRoleid().getId() == 1) {
             setRolLogin("Admin");
-            setPagina(1);
             return "admin";
         } else {
             setRolLogin("Usuario");
@@ -125,15 +124,14 @@ public class UsuarioController implements Serializable {
     }
 
     public List<Usuario> findAll() {
-        /*if(pagina <= 0) pagina = 1; 
+        if(pagina <= 0) pagina = 1; 
+        if(cant == 0) pagina = 1;
         int skip = ((pagina * 10) - 10);
         List<Usuario> ret;
-        if(skip < 0) ret = em.createQuery("SELECT u FROM Usuario u WHERE u.username LIKE :f ORDER BY u.creationDate DESC", Usuario.class).setParameter("f", "%" + filtro + "%").setMaxResults(10).setFirstResult(0).getResultList();
-        else ret = em.createQuery("SELECT u FROM Usuario u WHERE u.username LIKE :f ORDER BY u.creationDate DESC", Usuario.class).setParameter("f", "%" + filtro + "%").setMaxResults(10).setFirstResult(0).getResultList();
+        ret = em.createQuery("SELECT u FROM Usuario u WHERE u.username LIKE :f ORDER BY u.creationDate DESC", Usuario.class).setParameter("f", "%" + filtro + "%").setMaxResults(10).setFirstResult(skip).getResultList();
         pagina += 1;
         cant = ret.size();
-        return ret;*/
-        return em.createQuery("SELECT u FROM Usuario u", Usuario.class).getResultList();
+        return ret;
     }
 
     public String getName() {
