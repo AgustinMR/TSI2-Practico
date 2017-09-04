@@ -11,20 +11,20 @@
         <script src="js/semantic.min.js"></script>
     </head>
 
-    <body style="background-color: #g3g3g3">
+    <body style="background-color: #FCFCFC">
         <div class="ui secondary menu">
             <h3 class="ui header item"><i class="grey home icon"></i>Practico1</h3>
             <div class="right menu">
                 <p class="ui header small item" th:text="${username}"></p>
                 <form class="ui form item" action="/web/logout" method="post">
-                    <button type="submit" class="ui button large icon basic"><i class="sign out icon"></i>Logout</button>
+                    <button type="submit" class="ui button large basic item"><i class="sign orange out icon"></i>Logout</button>
                 </form>
             </div>
         </div>
         <div class="ui text center aligned container" id="loader" style="padding: 48px; padding-top: 64px">
             <div class="ui basic segment" style="padding: 100px">
-                <div class="ui active inverted dimmer">
-                    <div class="ui text large loader">Cargando informaci&oacute;n...</div>
+                <div class="ui active inverted dimmer" style="background-color: #FCFCFC">
+                    <div class="ui text big loader"><span class="ui grey text header small">Cargando informaci&oacute;n...</span></div>
                 </div>
             </div>
         </div>

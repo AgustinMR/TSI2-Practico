@@ -11,53 +11,66 @@
         <script src="js/semantic.min.js"></script>
     </head>
 
-    <body style="background-color: #g3g3g3">
+    <body style="background-color: #FCFCFC">
         <div class="ui secondary menu">
             <h3 class="ui header item"><i class="grey home icon"></i>Practico1</h3>
             <div class="right menu">
                 <p class="ui header small item grey" th:text="${username}"></p>
                 <form class="ui form item" action="/web/logout" method="post">
-                    <button type="submit" class="ui button large icon basic"><i class="sign out icon"></i>Logout</button>
+                    <button type="submit" class="ui button large basic item"><i class="sign orange out icon"></i>Logout</button>
                 </form>
             </div>
         </div>
-        <div class="ui center aligned container" style="padding: 48px; padding-top: 64px" id="listado">
-            <h1 class="ui header text icon title green horizontal divider" style="padding: 16px"><i class=" users grey icon"></i>Usuarios</h1>
-            <div class="ui text container">
-                <div class="ui fluid icon input">
-                    <i class="search link icon"></i>
-                    <input id="filtro" type="text" placeholder="Buscar por username...">
+        <div id="listado">
+            <div class="ui text center aligned container">
+                <h1 class="ui header text icon title grey horizontal divider" style="padding: 16px"><i class="users green icon"></i>Usuarios</h1>
+            </div>
+            <div class="ui left aligned basic secondary segment" style="padding: 16px;">
+                <div class="ui text container">
+                    <div class="ui secondary menu grid">
+                        <div class="row" style="padding: 7px">
+                            <div class="ui text container">
+                                <div class="ui fluid icon input">
+                                    <i class="search link icon"></i>
+                                    <input id="filtro" type="text" placeholder="Buscar por username...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="ui right aligned basic segment" style="padding-top: 48px">
-                <button class="ui button" onclick="mostrarRoles()"><i class="tags icon"></i>Crear Rol</button>
-                <button class="ui positive button" onclick="mostrarNuevo()"><i class="add user icon"></i>Crear Usuario</button>
+            <div class="ui center aligned container">
+                <button class="ui large basic button" onclick="mostrarRoles()"><i class="tags green icon"></i>Roles</button>
+                <button class="ui large basic button" onclick="mostrarNuevo()"><i class="users green icon"></i>Usuarios</button>
+                <a href="/web/sesiones" class="ui large basic button"><i class="history green icon"></i>Sesiones</a>
             </div>
-            <table class="ui celled very basic selectable table">
-                <thead>
-                    <tr class="ui small header">
-                        <th style="width: 30%">Username</th>
-                        <th>Email</th>
-                        <th style="width: 20%">Rol</th>
-                    </tr>
-                </thead>
-                <tbody id="usuariosList"></tbody>
-                <tfoot>
-                    <tr>
-                        <th colspan="3">
-                            <div class="ui right floated pagination menu">
-                                <a class="icon item" onclick="cargarUsuarios_anterior()">
-                                    <i class="left chevron icon"></i>
-                                </a>
-                                <a id="pag" class="disabled item header">1</a>
-                                <a class="icon item" onclick="cargarUsuarios_siguiente()">
-                                    <i class="right chevron icon"></i>
-                                </a>
-                            </div>
-                        </th>
-                    </tr>
-                </tfoot>
-            </table>
+            <div class="ui center aligned container" style="padding: 48px; padding-top: 64px">
+                <table class="ui celled very basic selectable table">
+                    <thead>
+                        <tr class="ui small header">
+                            <th style="width: 30%">Username</th>
+                            <th>Email</th>
+                            <th style="width: 20%">Rol</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usuariosList"></tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3">
+                                <div class="ui right floated pagination secondary menu" style="padding: 7px">
+                                    <a class="icon item" onclick="cargarUsuarios_anterior()">
+                                        <i class="left chevron icon"></i>
+                                    </a>
+                                    <a id="pag" class="disabled item header">1</a>
+                                    <a class="icon item" onclick="cargarUsuarios_siguiente()">
+                                        <i class="right chevron icon"></i>
+                                    </a>
+                                </div>
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
         <div class="ui center aligned container" style="padding: 28px; display: none" id="nuevo">
             <h1 class="ui header text icon title green horizontal divider" style="padding: 16px"><i class="add user grey icon"></i>Usuario Nuevo</h1>

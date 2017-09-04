@@ -1,7 +1,9 @@
 package com.tsi2.entidades;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +56,7 @@ public class Usuario implements Serializable {
         this.lastname = lastname;
         this.email = email;
         this.roleid = roleid;
+        this.creationDate = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DATE)).getTime();
     }
 
     public Usuario(String username, String password, String name, String lastname, String email) {
@@ -62,6 +65,7 @@ public class Usuario implements Serializable {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
+        this.creationDate = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DATE)).getTime();
     }
 
     public Usuario(String username) {

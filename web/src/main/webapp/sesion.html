@@ -1,0 +1,166 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>TSI2 | Practico</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/semantic.min.css">
+        <script src="js/jquery.js"></script>
+        <script src="js/semantic.min.js"></script>
+    </head>
+
+    <body style="background-color: #FCFCFC">
+        <div class="ui active page dimmer" id="dimmer2" style="display: none">
+            <div class="content">
+                <div class="center">
+                    <div class="row" id="exitoRol" style="display: none">
+                        <h1 class="ui header inverted text">Rol creado correctamente!</h1>
+                        <button class="ui icon button circular inverted large green"><i class="checkmark large icon"></i></button>
+                    </div>
+                    <div class="row" id="exitoUsuario" style="display: none">
+                        <h1 class="ui header inverted text">Usuario ingresado correctamente!</h1>
+                        <button class="ui icon button circular inverted large green"><i class="checkmark large icon"></i></button>
+                    </div>
+                    <div class="row" id="errorUsuario" style="display: none">
+                        <h1 class="ui header inverted text">No se ha podido ingresar el usuario.</h1>
+                        <button class="ui icon button circular inverted large red"><i class="warning large icon"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui secondary menu" style="margin: 0px">
+            <h3 class="ui header grey item"><i class="black home icon"></i>Practico1</h3>
+            <div class="right menu">
+                <p class="ui header small item grey" th:text="${username}"></p>
+                <form class="ui form item" action="/web/logout" method="post">
+                    <button type="submit" class="ui button large basic item"><i class="sign orange out icon"></i>Logout</button>
+                </form>
+            </div>
+        </div>
+        <div class="ui text center aligned container">
+            <h1 class="ui header text icon title grey horizontal divider" style="padding: 16px"><i class="history green icon"></i>Historial de sesiones</h1>
+        </div>
+        <div class="ui left aligned basic secondary segment" style="padding: 16px;">
+            <div class="ui text container">
+                <div class="ui fluid icon labeled input">
+                    <button class="ui button compact small icon" id="filtrarBtn" style="margin-right: 7px"><i class="options large icon"></i></button>
+                    <i class="search link blue icon"></i>
+                    <input type="text" placeholder="Buscar por username..." id="filtro">
+                </div>
+            </div>
+        </div>
+        <div class="ui segments raised popup bottom left pointing transition hidden" id="popup" style="max-width: 400px; width: 370px; padding: 0px;">
+            <div class="ui grey segment">
+                <h3 class="ui sub header text grey small horizontal divider" style="padding: 7px; margin-top: 3px">Fechas</h3>
+                <div class="ui fluid icon input" style="padding: 10px">
+                    <input type="date" placeholder="Sesiones desde...">
+                </div>
+                <div class="ui fluid icon input" style="padding: 10px">
+                    <input type="date" placeholder="Sesiones hasta...">
+                </div>
+            </div>
+            <div class="ui segment center aligned" style="padding: 7px">
+                <div class="ui secondary menu" style="margin: 0px">
+                    <div class="right menu"><button class="ui basic big button item"><i class="search green icon"></i>Buscar</button></div>
+                </div>
+            </div>
+        </div>
+        <div class="ui basic center aligned segment">
+            <a href="/web/admin" class="ui large very basic button"><i class="users green icon"></i>Usuarios</a>
+        </div>
+        <div class="ui center aligned container" style="padding: 32px" id="listado">
+            <table class="ui celled very basic selectable table">
+                <thead>
+                    <tr class="ui small header">
+                        <th class="ui grey text header small">Fecha</th>
+                        <th class="ui grey text header small">Hora</th>
+                        <th class="ui grey text header small">Username</th>
+                        <th class="ui grey text header small">Rol</th>
+                        <th class="ui grey text header small">User Agent</th>
+                        <th class="ui grey text header small">S.O</th>
+                    </tr>
+                </thead>
+                <tbody id="sesionesList"></tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="6">
+                            <div class="ui right floated pagination secondary menu" style="padding: 10px">
+                                <a class="icon item" onclick="cargarSesiones_anterior()">
+                                    <i class="left chevron icon"></i>
+                                </a>
+                                <a class="disabled item header" id="pag">1</a>
+                                <a class="icon item">
+                                    <i class="right chevron icon" onclick="cargarSesiones_siguiente()"></i>
+                                </a>
+                            </div>
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('.ui.dropdown').dropdown();
+                $('#filtrarBtn').popup({
+                    popup: $('#popup'),
+                    on: 'click',
+                    position: 'bottom left'
+                });
+                listarSesiones(1);
+            });
+
+            function listarSesiones(pagina) {
+                var filtro = document.getElementById("filtro").value;
+                if (pagina === undefined) {
+                    pagina = 1;
+                }
+                $.get("http://localhost:8080/web/api/sesiones?filtro=" + filtro + "&pagina=" + pagina, function (response) {
+                    if (response !== undefined) {
+                        while (document.getElementById("sesionesList").hasChildNodes()) {
+                            document.getElementById("sesionesList").removeChild(document.getElementById("sesionesList").lastChild);
+                        }
+                        $.each(response, function (index, sesion) {
+                            var tr = document.createElement("tr");
+                            var td1 = document.createElement("td");
+                            var f = new Date(sesion.fecha);
+                            td1.innerHTML = f.getDate() + "/" + (f.getMonth()+1) + "/" + f.getFullYear();
+                            var td2 = document.createElement("td");
+                            td2.innerHTML = sesion.hora;
+                            var td3 = document.createElement("td");
+                            td3.innerHTML = sesion.username;
+                            var td4 = document.createElement("td");
+                            td4.innerHTML = sesion.rol;
+                            var td5 = document.createElement("td");
+                            td5.innerHTML = sesion.userAgent;
+                            var td6 = document.createElement("td");
+                            td6.innerHTML = sesion.so;
+                            tr.appendChild(td1);
+                            tr.appendChild(td2);
+                            tr.appendChild(td3);
+                            tr.appendChild(td4);
+                            tr.appendChild(td5);
+                            tr.appendChild(td6);
+                            document.getElementById("sesionesList").appendChild(tr);
+                        });
+                    }
+                });
+            }
+
+            function cargarSesiones_siguiente() {
+                if (document.getElementById("sesionesList").childNodes.length >= 10) {
+                    listarSesiones((Number(document.getElementById("pag").innerHTML) + 1));
+                    document.getElementById("pag").innerHTML = (Number(document.getElementById("pag").innerHTML) + 1).toString();
+                }
+            }
+            function cargarSesiones_anterior() {
+                var paginaActual = Number(document.getElementById("pag").innerHTML);
+                if (paginaActual > 1) {
+                    listarSesiones((paginaActual - 1));
+                    document.getElementById("pag").innerHTML = (paginaActual - 1).toString();
+                }
+            }
+        </script>
+    </body>
+</html>

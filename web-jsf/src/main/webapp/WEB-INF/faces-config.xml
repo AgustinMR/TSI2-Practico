@@ -6,7 +6,7 @@
     <managed-bean>
         <managed-bean-name>usuarioController</managed-bean-name>
         <managed-bean-class>com.tsi2.UsuarioController</managed-bean-class>
-        <managed-bean-scope>view</managed-bean-scope>
+        <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>rolController</managed-bean-name>
