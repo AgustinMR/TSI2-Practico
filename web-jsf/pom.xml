@@ -8,11 +8,11 @@
     </parent>
 
     <groupId>com.tsi2</groupId>
-    <artifactId>web</artifactId>
+    <artifactId>web-jsf</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
 
-    <name>web</name>
+    <name>web-jsf</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -33,25 +33,21 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <version>6.1</version>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf</artifactId>
-            <version>3.0.7.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>eu.bitwalker</groupId>
-            <artifactId>UserAgentUtils</artifactId>
-            <version>1.20</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver</artifactId>
-            <version>3.5.0</version>
+            <groupId>javax.faces</groupId>
+            <artifactId>javax.faces-api</artifactId>
+            <version>2.2</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

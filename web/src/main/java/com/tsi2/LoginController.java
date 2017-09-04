@@ -1,6 +1,11 @@
 package com.tsi2;
 
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.client.MongoCollection;
+import com.tsi2.entidades.Sesion;
 import com.tsi2.entidades.Usuario;
+import eu.bitwalker.useragentutils.UserAgent;
 import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -9,6 +14,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -40,6 +49,11 @@ public class LoginController extends HttpServlet {
             Usuario u = em.find(Usuario.class, username);
             if (u != null) {
                 if (u.getPassword().equals(password)) {
+                    UserAgent userAgent = UserAgent.parseUserAgentString(req.getHeader("User-Agent"));
+                    CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+                    MongoClient mongo = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
+                    MongoCollection<Sesion> sesiones = mongo.getDatabase("practico1").getCollection("sesiones", Sesion.class);
+                    sesiones.insertOne(new Sesion(username, u.getRoleid().getName(), userAgent.getBrowser().getName(), userAgent.getOperatingSystem().getName()));
                     req.getSession().setAttribute("username", username);
                     if (u.getRoleid().getId() == 1) {
                         req.getSession().setAttribute("rol", "Admin");
