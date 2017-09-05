@@ -2,6 +2,7 @@ package com.tsi2.controllers;
 
 import com.tsi2.businessLogic.BLLUsuarioBeanLocal;
 import com.tsi2.entidades.Usuario;
+
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
