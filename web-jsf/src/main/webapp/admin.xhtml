@@ -31,12 +31,10 @@
                     <div class="ui secondary menu grid">
                         <div class="row" style="padding: 7px">
                             <div class="ui text container">
-                                <h:form>
-                                    <div class="ui fluid icon input">
-                                        <p:commandLink><i class="search link icon"></i></p:commandLink>
-                                        <p:inputText id="filtro" value="#{usuarioController.filtro}" placeholder="Buscar por username..." />
-                                    </div>
-                                </h:form>
+                                <div class="ui fluid icon input">
+                                    <i class="search link icon" onclick="cargarUsuarios(1)"></i>
+                                    <p:inputText id="filtro" placeholder="Buscar por username..." />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -50,33 +48,29 @@
             <div class="ui center aligned container" style="padding: 48px; padding-top: 64px">
                 <table class="ui celled very basic selectable table">
                     <thead>
-                        <th>
-                            <td class="ui header text small grey">Username</td>
-                            <td class="ui header text small grey">Email</td>
-                            <td class="ui header text small grey">Rol</td>
-                        </th>
+                        <tr class="ui small header">
+                            <th style="width: 30%">Username</th>
+                            <th>Email</th>
+                            <th style="width: 20%">Rol</th>
+                        </tr>
                     </thead>
-                    <tbody id="usuariosList">
-                        <ui:repeat var="usuario" value="#{usuarioController.findAll()}" varStatus="status">
-                            <tr>
-                                <td>#{usuario.username}</td>
-                                <td>#{usuario.email}</td>
-                                <td>#{usuario.roleid.name}</td>
-                            </tr>
-                        </ui:repeat>
-                    </tbody>
+                    <tbody id="usuariosList"></tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3">
+                                <div class="ui right floated pagination secondary menu" style="padding: 7px">
+                                    <a class="icon item" onclick="cargarUsuarios_anterior()">
+                                        <i class="left chevron icon"></i>
+                                    </a>
+                                    <a id="pag" class="disabled item header">1</a>
+                                    <a class="icon item" onclick="cargarUsuarios_siguiente()">
+                                        <i class="right chevron icon"></i>
+                                    </a>
+                                </div>
+                            </th>
+                        </tr>
+                    </tfoot>
                 </table>
-                <div class="ui basic center aligned segment">
-                    <div class="ui right floated pagination secondary menu" style="padding: 7px">
-                        <a class="icon item">
-                            <i class="left chevron icon"></i>
-                        </a>
-                        <a class="disabled item header">#{usuarioController.pagina}</a>
-                        <a class="icon item">
-                            <i class="right chevron icon"></i>
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="ui center aligned container" style="padding: 28px; display: none" id="nuevo">
@@ -85,23 +79,23 @@
                 <h:form>
                     <div class="ui fluid labeled input">
                         <div class="ui basic label">Nombre</div>
-                        <h:inputText id="nombreNuevo" value="#{usuarioController.name}" title="Ingrese aqu&iacute; el nombre..." />
+                        <p:inputText id="nombreNuevo" value="#{usuarioController.name}" placeholder="Ingrese aqu&iacute; el nombre..." />
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Apellido</div>
-                        <h:inputText id="apellidoNuevo" value="#{usuarioController.lastname}" title="Ingrese aqu&iacute; el apellido..." />
+                        <p:inputText id="apellidoNuevo" value="#{usuarioController.lastname}" placeholder="Ingrese aqu&iacute; el apellido..." />
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Username</div>
-                        <h:inputText id="usernameNuevo" value="#{usuarioController.username}" title="Ingrese aqu&iacute; un username o nombre de usuario..." />
+                        <p:inputText id="usernameNuevo" value="#{usuarioController.username}" placeholder="Ingrese aqu&iacute; un username o nombre de usuario..." />
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Email</div>
-                        <h:inputText id="emailNuevo" value="#{usuarioController.email}" title="Ingrese aqu&iacute; un email..." />
+                        <p:inputText id="emailNuevo" value="#{usuarioController.email}" placeholder="Ingrese aqu&iacute; un email..." />
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Contrase&ntilde;a</div>
-                        <h:inputSecret id="passwordNuevo" value="#{usuarioController.password}" title="Ingrese aqu&iacute; una contrase&ntilde;a..." />
+                        <p:inputText type="password" id="passwordNuevo" value="#{usuarioController.password}" placeholder="Ingrese aqu&iacute; una contrase&ntilde;a..." />
                     </div>
                     <h3 class="ui horizontal divider sub header text green" style="padding: 16px">rol</h3>
                     <h:selectOneMenu class="ui fluid dropdown" value="#{usuarioController.rol}" id="rolSeleccionado">
@@ -120,11 +114,11 @@
                 <h:form>
                     <div class="ui fluid labeled input">
                         <div class="ui basic label">Nombre</div>
-                        <h:inputText id="rolNuevo" value="#{rolController.nombre}" title="Ingrese aqu&iacute; un nombre para el rol..." /> 
+                        <p:inputText id="rolNuevo" value="#{rolController.nombre}" placeholder="Ingrese aqu&iacute; un nombre para el rol..." /> 
                     </div>
                     <div class="ui reply form" style="margin-top: 16px">
                         <div class="field">
-                            <h:inputTextarea id="descripcionNuevo" value="#{rolController.descripcion}" title="Ingrese aqu&iacute; una descripci&oacute;n para el rol..." style="min-height: 100px; max-width: 100%; min-width: 100%; max-height: 150px" />
+                            <p:inputTextarea id="descripcionNuevo" value="#{rolController.descripcion}" placeholder="Ingrese aqu&iacute; una descripci&oacute;n para el rol..." style="min-height: 100px; max-width: 100%; min-width: 100%; max-height: 150px" />
                         </div>
                     </div>
                     <div class="row" style="padding: 30px">
@@ -184,14 +178,14 @@
                     </div>
                     <div class="ui fluid labeled input">
                         <div class="ui basic label">Nombre</div>
-                        <h:inputText id="nombreMod" value="#{usuarioController.username}" />
+                        <p:inputText id="nombreMod" value="#{usuarioController.username}" />
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
-                        <h:inputText id="apellidoMod" value="#{usuarioController.lastname}" />
+                        <p:inputText id="apellidoMod" value="#{usuarioController.lastname}" />
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Email</div>
-                        <h:inputText id="emailMod" value="#{usuarioController.email}" />
+                        <p:inputText id="emailMod" value="#{usuarioController.email}" />
                     </div>
                     <div class="ui fluid labeled input" style="margin-top: 16px">
                         <div class="ui basic label">Contrase&ntilde;a</div>
@@ -214,6 +208,7 @@
         <script>
             $(document).ready(function () {
                 $('.ui.dropdown').dropdown();
+                cargarUsuarios(1);
             });
 
             function registroCompletado(xhr, status, args) {
@@ -276,6 +271,36 @@
                         }
                     });
                 }
+            }
+
+            function cargarUsuarios(pag) {
+                var filtro = document.getElementById("filtro").value;
+                if (pag === undefined) {
+                    pag = 1;
+                }
+                $.get("http://localhost:8080/web/api/usuarios/cualquiera/" + pag + "?filtro=" + filtro, function (response) {
+                    if (response !== undefined) {
+                        while (document.getElementById("usuariosList").hasChildNodes()) {
+                            document.getElementById("usuariosList").removeChild(document.getElementById("usuariosList").lastChild);
+                        }
+                        $.each(response, function (index, usuario) {
+                            var tr = document.createElement("tr");
+                            tr.addEventListener("dblclick", function () {
+                                cargarUsuario(usuario.username);
+                            });
+                            var td1 = document.createElement("td");
+                            td1.innerHTML = usuario.username;
+                            var td2 = document.createElement("td");
+                            td2.innerHTML = usuario.email;
+                            var td3 = document.createElement("td");
+                            td3.innerHTML = usuario.roleid.name;
+                            tr.appendChild(td1);
+                            tr.appendChild(td2);
+                            tr.appendChild(td3);
+                            document.getElementById("usuariosList").appendChild(tr);
+                        });
+                    }
+                });
             }
 
             function cargarUsuarios_siguiente() {

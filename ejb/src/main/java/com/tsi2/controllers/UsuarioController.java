@@ -2,6 +2,7 @@ package com.tsi2.controllers;
 
 import com.tsi2.businessLogic.BLLUsuarioBeanLocal;
 import com.tsi2.entidades.Usuario;
+
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
@@ -46,9 +47,15 @@ public class UsuarioController {
     public Usuario getUsuario(@PathParam("username") String username) {
         return usuarios.getUsuario(username);
     }
-    
+
     @GET
-    public List<Usuario> getUsuarios(@QueryParam("filtro") String filtro, @QueryParam("pagina") int pagina){
+    public List<Usuario> getUsuarios(@QueryParam("filtro") String filtro, @QueryParam("pagina") int pagina) {
+        return usuarios.findAll(filtro, pagina);
+    }
+
+    @GET
+    @Path("/cualquiera/{pagina}")
+    public List<Usuario> getUsuarios_cualquiera(@PathParam("pagina") int pagina, @QueryParam("filtro") String filtro) {
         return usuarios.findAll(filtro, pagina);
     }
 
