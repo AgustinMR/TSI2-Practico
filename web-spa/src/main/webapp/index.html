@@ -189,7 +189,7 @@
                 </button>
                 <button class="ui large basic button" @click="mostrarNuevo"><i class="users green icon"></i>Usuarios
                 </button>
-                <a href="/web/sesiones" class="ui large basic button"><i class="history green icon"></i>Sesiones</a>
+                <button class="ui large basic button" @click="mostrarSesiones"><i class="history green icon"></i>Sesiones</button>
             </div>
             <div class="ui center aligned container">
                 <table class="ui celled very basic selectable table" style="padding: 24px">
@@ -276,6 +276,9 @@
                     </button>
                 </div>
             </div>
+        </div>
+        <div style="display: none" id="sesiones">
+            <app-sesion v-if="sesiones"></app-sesion>
         </div>
         <div class="ui active page dimmer" id="dimmer2" style="display: none">
             <div class="content">
@@ -375,6 +378,77 @@
             <h1 class="ui grey header" style="margin-top: 0px">{{rol}}</h1>
             <h6 class="ui sub grey header small">username</h6>
             <h2 class="ui grey header" style="margin-top: 0px">{{usern}}</h2>
+        </div>
+    </div>
+</script>
+<script type="text/x-template" id="app-sesion-template">
+    <div>
+        <div class="ui text center aligned container">
+            <h1 class="ui header text icon title grey horizontal divider" style="padding: 16px"><i
+                    class="history green icon"></i>Historial de sesiones</h1>
+        </div>
+        <div class="ui left aligned basic secondary segment" style="padding: 16px;">
+            <div class="ui text container">
+                <div class="ui fluid icon labeled input">
+                    <button class="ui button compact small icon" id="filtrarBtn" style="margin-right: 7px"><i
+                            class="options large icon"></i></button>
+                    <i class="search link blue icon"></i>
+                    <input type="text" v-model="filtro" placeholder="Buscar por username...">
+                </div>
+            </div>
+        </div>
+        <div class="ui segments raised popup bottom left pointing transition hidden" id="popup"
+             style="max-width: 400px; width: 370px; padding: 0px;">
+            <div class="ui grey segment">
+                <h3 class="ui sub header text grey small horizontal divider" style="padding: 7px; margin-top: 3px">
+                    Fechas</h3>
+                <div class="ui fluid icon input" style="padding: 10px">
+                    <input type="date" placeholder="Sesiones desde...">
+                </div>
+                <div class="ui fluid icon input" style="padding: 10px">
+                    <input type="date" placeholder="Sesiones hasta...">
+                </div>
+            </div>
+            <div class="ui segment center aligned" style="padding: 7px">
+                <div class="ui secondary menu" style="margin: 0px">
+                    <div class="right menu">
+                        <button class="ui basic big button item"><i class="search green icon"></i>Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui basic center aligned segment">
+            <button @click="usuarios" class="ui large very basic button"><i class="users green icon"></i>Usuarios</button>
+        </div>
+        <div class="ui center aligned container" style="padding: 32px">
+            <table class="ui celled very basic selectable table">
+                <thead>
+                <tr class="ui small header">
+                    <th class="ui grey text header small">Fecha</th>
+                    <th class="ui grey text header small">Hora</th>
+                    <th class="ui grey text header small">Username</th>
+                    <th class="ui grey text header small">Rol</th>
+                    <th class="ui grey text header small">User Agent</th>
+                    <th class="ui grey text header small">S.O</th>
+                </tr>
+                </thead>
+                <tbody id="sesionesList"></tbody>
+                <tfoot>
+                <tr>
+                    <th colspan="6">
+                        <div class="ui right floated pagination secondary menu" style="padding: 10px">
+                            <a class="icon item" @click="cargarAnterior">
+                                <i class="left chevron icon"></i>
+                            </a>
+                            <a class="disabled item header">{{pagina}}</a>
+                            <a class="icon item" @click="cargarSiguiente">
+                                <i class="right chevron icon"></i>
+                            </a>
+                        </div>
+                    </th>
+                </tr>
+                </tfoot>
+            </table>
         </div>
     </div>
 </script>
@@ -575,7 +649,8 @@
                 rolMod: '',
                 usuarioActual: '',
                 usernameMod: '',
-                pagina: 1
+                pagina: 1,
+                sesiones: false
             };
         },
         methods: {
@@ -736,6 +811,30 @@
                     }
                 });
             },
+            mostrarSesiones: function(){
+                this.sesiones = true;
+                $('#listadoAdmin').transition({
+                    animation: 'fade down',
+                    onComplete: function () {
+                        $('#sesiones').transition('fade up');
+                    }
+                });
+            },
+            mostrarListadoSesiones: function(){
+                var _this = this;
+                $('#sesiones').transition({
+                    animation: 'fade down',
+                    onComplete: function () {
+                        $('#listadoAdmin').transition({
+                            animation: 'fade up',
+                            onComplete: function(){
+                                _this.sesiones = false;
+                            }
+                        });
+                    }
+                });
+
+            },
             mostrarNuevo: function () {
                 $('#listadoAdmin').transition({
                     animation: 'fade down',
@@ -839,6 +938,10 @@
         },
         created: function () {
             $('.ui.dropdown').dropdown();
+            var _this = this;
+            bus.$on('usuarios', function(x){
+                _this.mostrarListadoSesiones();
+            });
         },
         mounted: function () {
             this.cargarUsuarios(1);
@@ -846,7 +949,73 @@
             $('.ui.dropdown').dropdown();
         }
     });
-
+    Vue.component('app-sesion', {
+        template: '#app-sesion-template',
+        data: function () {
+            return {
+                filtro: '',
+                pagina: 1
+            }
+        },
+        created: function(){
+            $('.ui.dropdown').dropdown();
+            $('#filtrarBtn').popup({
+                popup: $('#popup'),
+                on: 'click',
+                position: 'bottom left'
+            });
+            this.listarSesiones();
+        },
+        methods: {
+            listarSesiones: function(){
+                $.get("http://localhost:8080/web/api/sesiones?filtro=" + this.filtro + "&pagina=" + this.pagina, function (response) {
+                    if (response !== undefined) {
+                        while (document.getElementById("sesionesList").hasChildNodes()) {
+                            document.getElementById("sesionesList").removeChild(document.getElementById("sesionesList").lastChild);
+                        }
+                        $.each(response, function (index, sesion) {
+                            var tr = document.createElement("tr");
+                            var td1 = document.createElement("td");
+                            var f = new Date(sesion.fecha);
+                            td1.innerHTML = f.getDate() + "/" + (f.getMonth()+1) + "/" + f.getFullYear();
+                            var td2 = document.createElement("td");
+                            td2.innerHTML = sesion.hora;
+                            var td3 = document.createElement("td");
+                            td3.innerHTML = sesion.username;
+                            var td4 = document.createElement("td");
+                            td4.innerHTML = sesion.rol;
+                            var td5 = document.createElement("td");
+                            td5.innerHTML = sesion.userAgent;
+                            var td6 = document.createElement("td");
+                            td6.innerHTML = sesion.so;
+                            tr.appendChild(td1);
+                            tr.appendChild(td2);
+                            tr.appendChild(td3);
+                            tr.appendChild(td4);
+                            tr.appendChild(td5);
+                            tr.appendChild(td6);
+                            document.getElementById("sesionesList").appendChild(tr);
+                        });
+                    }
+                });
+            },
+            cargarSiguiente: function(){
+                if(document.getElementById("sesionesList").childNodes.length >= 10){
+                    this.pagina += 1;
+                    this.listarSesiones();
+                }
+            },
+            cargarAnterior: function(){
+                if(this.pagina > 1){
+                    this.pagina -= 1;
+                    this.listarSesiones();
+                }
+            },
+            usuarios: function(){
+                bus.$emit('usuarios', true);
+            }
+        }
+    });
     var app = new Vue({
         el: '#app',
         data: {
