@@ -5,9 +5,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.*;
 
-public class Sesion implements Serializable {
+@Entity("sesiones")
+public class Sesion {
 
+    @Id
     private ObjectId id;
     private String username;
     private String rol;
