@@ -32,31 +32,18 @@ import org.mongodb.morphia.query.Query;
 public class SesionController {
 
     @GET
-    public List<Sesion> listarSesiones(@QueryParam("filtro") String filtro, @QueryParam("pagina") int pagina) {
-        /*Document params = new Document();
-        if(filtro != null && !filtro.isEmpty()) params.append("username", new Document("$eq", filtro));
-        if(desde != null && !desde.isEmpty()){
-            Fecha d = new Fecha(desde);
-            params.append("fecha", new Document("$gte", new GregorianCalendar(d.getAnio(), d.getMes(), d.getDia()).getTime()));
-        }
-        if(hasta != null && !hasta.isEmpty()){
-            Fecha h = new Fecha(hasta);
-            params.append("fecha", new Document("$lte", new GregorianCalendar(h.getAnio(), h.getMes(), h.getDia()).getTime()));
-        }*/
-        //CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-        //MongoClient mongo = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
-        /*MongoCollection<Sesion> sesiones = mongo.getDatabase("practico1").getCollection("sesiones", Sesion.class);
-        int skip = ((pagina * 10) - 10);
-        List<Sesion> ret = new ArrayList<>();
-        sesiones.find(params).skip(skip).limit(10).sort(Sorts.descending("fecha")).into(ret).toArray();
-        return ret;*/
+    public List<Sesion> listarSesiones(@QueryParam("filtro") String filtro, @QueryParam("pagina") int pagina, @QueryParam("desde") String desde, @QueryParam("hasta") String hasta) {
         int skip = ((pagina * 10) - 10);
         final Morphia m = new Morphia();
         m.map(Sesion.class);
         //m.mapPackage("com.tsi2.entidades", true);
+        Fecha d = new Fecha(desde);
+        Fecha h = new Fecha(hasta);
         final Datastore ds = m.createDatastore(new MongoClient(), "practico1");
         Query<Sesion> query = ds.createQuery(Sesion.class);
         if(filtro != null && !filtro.isEmpty()) query.field("username").equal(filtro);
+        if(desde != null && !desde.isEmpty()) query.field("fecha").greaterThanOrEq(new GregorianCalendar(d.getAnio(), (d.getMes() -1), d.getDia()).getTime());
+        if(hasta != null && !hasta.isEmpty()) query.field("fecha").lessThanOrEq(new GregorianCalendar(h.getAnio(), (h.getMes()-1), h.getDia()).getTime());
         return query.asList(new FindOptions().skip(skip).limit(10));
     }
 
